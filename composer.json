@@ -1,0 +1,25 @@
+{
+    "name": "veron-33/web-ad",
+    "description": "A PHP web-frontend of ActiveDirectory",
+    "type": "project",
+    "keywords": ["Active Directory", "frontend", "adldap", "ldap" , "Windows domain"],
+    "homepage": "https://github.com/veron-33/Web-ad",
+    "support": {
+        "email": "veron-33@yandex.ru",
+        "issues": "https://github.com/veron-33/Web-ad/issues",
+        "wiki": "https://github.com/veron-33/Web-ad/wiki",
+        "source": "https://github.com/veron-33/Web-ad"
+    },
+    "require": {
+        "adldap2/adldap2": "^5.2",
+        "twig/twig": "^1.24",
+        "philipp15b/php-i18n": "^3.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fedotov Igor",
+            "email": "veron-33@yandex.ru"
+        }
+    ]
+}
