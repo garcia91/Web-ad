@@ -13,7 +13,8 @@
     "require": {
         "adldap2/adldap2": "^5.2",
         "twig/twig": "^1.24",
-        "philipp15b/php-i18n": "^3.0"
+        "philipp15b/php-i18n": "^3.0",
+        "hassankhan/config": "0.10.0"
     },
     "license": "MIT",
     "authors": [
