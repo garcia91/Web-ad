@@ -72,6 +72,11 @@ class core
 
     protected static $twVars = array();
 
+    /**
+     * @var logger
+     */
+    protected static $log;
+
 
 
     //###########################################################
@@ -91,6 +96,7 @@ class core
         self::initConfiguration(self::$iniFile);
         self::initI18n(self::$i18nLangPath, self::$i18nCachePath);
         self::initTwig(self::$twigTemplates, self::$twigConfig);
+        self::$log = new logger();
     }
 
 

@@ -44,7 +44,8 @@
         "classmap": [
             "core/core.php",
             "core/adldap.php",
-            "core/session.php"
+            "core/session.php",
+            "core/logger.php"
         ]
     }
 }
