@@ -2,7 +2,7 @@
     "name": "veron-33/web-ad",
     "description": "A PHP web-frontend of ActiveDirectory",
     "type": "project",
-    "keywords": ["Active Directory", "frontend", "adldap", "ldap" , "Windows domain"],
+    "keywords": ["Active Directory", "frontend", "adldap", "ldap" , "Windows domain", "web-ad"],
     "homepage": "https://github.com/veron-33/Web-ad",
     "support": {
         "email": "veron-33@yandex.ru",
@@ -14,7 +14,7 @@
         "adldap2/adldap2": "^5.2",
         "twig/twig": "^1.24",
         "philipp15b/php-i18n": "^3.0",
-        "hassankhan/config": "0.10.0"
+        "noirsoldats/iniClass":"1"
     },
     "license": "MIT",
     "authors": [
@@ -22,5 +22,29 @@
             "name": "Fedotov Igor",
             "email": "veron-33@yandex.ru"
         }
-    ]
+    ],
+    "repositories":[
+        {
+            "type":"package",
+            "package":{
+                "name":"noirsoldats/iniClass",
+                "version":"1",
+                "source":{
+                    "type":"git",
+                    "url":"https://github.com/noirsoldats/iniClass",
+                    "reference":"master"
+                },
+                "autoload":{
+                    "classmap":["ini.php"]
+                }
+            }
+        }
+    ],
+    "autoload": {
+        "classmap": [
+            "core/core.php",
+            "core/adldap.php",
+            "core/session.php"
+        ]
+    }
 }
