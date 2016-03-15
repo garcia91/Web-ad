@@ -18,7 +18,6 @@ class session
      */
     protected $cTime = 604800; //7 days
 
-    protected $started = false;
 
     /**
      * session constructor.
@@ -27,8 +26,6 @@ class session
     {
         session_set_cookie_params($this->cTime);
         session_start();
-        $this->started = true;
-
     }
 
     /**
