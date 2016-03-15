@@ -129,7 +129,7 @@ class core
     /**
      * @param string $template
      */
-    public static function render($template = 'index.html')
+    public static function render($template = 'index.twig')
     {
         echo self::$twig->render($template, self::$twVars);
     }
