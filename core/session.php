@@ -54,6 +54,16 @@ class session
         } else return null;
     }
 
+
+    /**
+     * @param string $name
+     * @return string
+     */
+    public function __get($name)
+    {
+        return $this->get($name);
+    }
+
     /**
      * @param $key string
      * @return string
@@ -131,11 +141,6 @@ class session
         }
     }
 
-
-    public function __destruct()
-    {
-        $this->destroy();
-    }
 
     /**
      * Destroy session and cookies

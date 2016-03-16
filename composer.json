@@ -45,7 +45,8 @@
             "core/core.php",
             "core/adldap.php",
             "core/session.php",
-            "core/logger.php"
+            "core/logger.php",
+            "core/request.php"
         ]
     }
 }

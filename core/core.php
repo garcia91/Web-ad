@@ -9,7 +9,6 @@
 namespace webad;
 
 
-
 class core
 {
     /**
@@ -24,7 +23,7 @@ class core
      *
      * @var string
      */
-    protected static $iniFile = __DIR__."/config.ini";
+    protected static $iniFile = __DIR__ . "/config.ini";
 
     /**
      * @var string
@@ -46,7 +45,7 @@ class core
      */
     protected static $twigConfig = array(
         //'cache'=>'./cache/twig'
-        'cache'=>false
+        'cache' => false
     );
 
     /**
@@ -78,6 +77,11 @@ class core
     protected static $log;
 
 
+    /**
+     * @var request
+     */
+    public static $param;
+
 
     //###########################################################
     /**
@@ -97,10 +101,12 @@ class core
         self::initI18n(self::$i18nLangPath, self::$i18nCachePath);
         self::initTwig(self::$twigTemplates, self::$twigConfig);
         self::$log = new logger();
+        self::$param = new request();
     }
 
 
-    private function initConfiguration($file) {
+    private function initConfiguration($file)
+    {
         self::$config = new \ini($file);
 
     }
@@ -160,12 +166,12 @@ class core
      */
     public static function getVar($var = '')
     {
-        if ($var != '' and array_key_exists($var, self::$twVars))
-        {
+        if ($var != '' and array_key_exists($var, self::$twVars)) {
             return self::$twVars[$var];
         }
         return false;
     }
+
 
 
 
