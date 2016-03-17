@@ -7,7 +7,8 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon"/>
 
     <link type="text/css" rel="stylesheet" href="./css/jquery-ui.css" >
-    <link type="text/css" rel="stylesheet" href="./css/schemas/bootstrap.cosmo.min.css" >
+    <link type="text/css" rel="stylesheet" href="./css/schemas/bootstrap.cerulean.css" >
+    <link type="text/css" rel="stylesheet" href="./css/style.css" >
 
     <script type="text/javascript" src="./js/jquery-1.12.1.min.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.min.js"></script>
@@ -16,15 +17,16 @@
     <title>Web-AD: {% block pagetitle %}{% endblock %}</title>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-static-top">
+    <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Web-AD</a>
-
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed {% block authhide %}{% endblock %}" data-toggle="collapse" data-target="#bs-navbar-collapse-2" aria-expanded="false">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Web-AD</a>
+            </div>
             {% block navbar %}
             {% endblock %}
 

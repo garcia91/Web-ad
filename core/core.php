@@ -138,7 +138,7 @@ class core
     /**
      * @param string $template
      */
-    public static function render($template = 'index.twig')
+    public static function render($template = 'auth.twig')
     {
         echo self::$twig->render($template, self::$twVars);
     }
