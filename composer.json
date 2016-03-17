@@ -13,8 +13,7 @@
     "require": {
         "adldap2/adldap2": "^5.2",
         "twig/twig": "^1.24",
-        "philipp15b/php-i18n": "^3.0",
-        "noirsoldats/iniClass":"1"
+        "philipp15b/php-i18n": "^3.0"
     },
     "license": "MIT",
     "authors": [
@@ -23,30 +22,14 @@
             "email": "veron-33@yandex.ru"
         }
     ],
-    "repositories":[
-        {
-            "type":"package",
-            "package":{
-                "name":"noirsoldats/iniClass",
-                "version":"1",
-                "source":{
-                    "type":"git",
-                    "url":"https://github.com/noirsoldats/iniClass",
-                    "reference":"master"
-                },
-                "autoload":{
-                    "classmap":["ini.php"]
-                }
-            }
-        }
-    ],
     "autoload": {
         "classmap": [
             "core/core.php",
             "core/adldap.php",
             "core/session.php",
             "core/logger.php",
-            "core/request.php"
+            "core/request.php",
+            "core/iniConfig.php"
         ]
     }
 }

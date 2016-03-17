@@ -14,7 +14,7 @@ class core
     /**
      * Object of configuration from ini class
      *
-     * @var \ini
+     * @var iniConfig
      */
     public static $config;
 
@@ -64,6 +64,8 @@ class core
     protected static $i18nLangPath = "./l10n/lang_{LANGUAGE}.ini";
 
     /**
+     * !important
+     *
      * @var string
      */
     protected static $i18nCachePath = "./cache/l10n/";
@@ -107,8 +109,7 @@ class core
 
     private function initConfiguration($file)
     {
-        self::$config = new \ini($file);
-
+        self::$config = new iniConfig($file);
     }
 
     private function initTwig($twTmplPath, $twConfig)
@@ -119,6 +120,8 @@ class core
 
 
     /**
+     * !It's important to use cache for configuring Twig-vars
+     *
      * @param string $langPath Path to lang directory
      * @param string $langCache Path to cache
      * @throws \Exception

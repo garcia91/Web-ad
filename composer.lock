@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5c12128b8efe2d964b59a2ff369f5056",
-    "content-hash": "1154ef6c485cabcbe20e21ab0a0a13dd",
+    "hash": "2b2a371b759a0116c43c4b95c0e2f101",
+    "content-hash": "1b6b902f2e38b93d87b64a7a0ba1338c",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -124,21 +124,6 @@
                 "iterator"
             ],
             "time": "2015-04-14 22:21:58"
-        },
-        {
-            "name": "noirsoldats/iniClass",
-            "version": "1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/noirsoldats/iniClass",
-                "reference": "master"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "ini.php"
-                ]
-            }
         },
         {
             "name": "philipp15b/php-i18n",
