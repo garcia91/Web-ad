@@ -8,12 +8,20 @@
 
 namespace webad;
 
+use \Adldap\Connections\Configuration;
 
 class ad extends \Adldap\Adldap
 {
+    /**
+     * @var Configuration
+     */
+    private $config;
 
-    public function testecho()
+
+    public function __construct($configuration, $connection, $autoConnect)
     {
-        echo "test passed";
+
+        parent::__construct($this->config, $connection, $autoConnect);
     }
+
 }

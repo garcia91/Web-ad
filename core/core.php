@@ -28,7 +28,7 @@ class core
     /**
      * @var string
      */
-    protected static $twigTemplates = "./templates";
+    protected static $twigTemplates = "./templates/";
 
     /**
      * @var \Twig_Loader_Array
@@ -71,7 +71,7 @@ class core
     protected static $i18nCachePath = "./cache/l10n/";
 
 
-    protected static $twVars = array();
+    public static $twVars = array();
 
     /**
      * @var logger
@@ -84,6 +84,17 @@ class core
      */
     public static $param;
 
+
+    /**
+     * @var string
+     */
+    private static $currTemplate = 'auth.twig';
+
+
+    /**
+     * @var ad
+     */
+    public static $ad;
 
     //###########################################################
     /**
@@ -104,6 +115,48 @@ class core
         self::initTwig(self::$twigTemplates, self::$twigConfig);
         self::$log = new logger();
         self::$param = new request();
+        self::checkParam();
+        self::checkLogon();
+
+
+
+    }
+
+    private static function checkParam() {
+        if ($action = self::$param->act) {
+            switch ($action) {
+                case 'auth':
+                    self::$session->dc = self::$param->dc;
+                    self::$session->username = self::$param->login;
+                    self::$session->userpass = self::$param->password;
+                    break;
+            }
+
+        }
+    }
+
+    /**
+     * Check if user is authorized
+     * and if he is than add array of dc's to twig var
+     *
+     * @return bool
+     */
+    private static function checkLogon()
+    {
+        if (self::$session->user_logon) {
+            self::$currTemplate = "index.twig";
+            return true;
+        } else {
+            self::$currTemplate = "auth.twig";
+            $dcs = self::$config['dc'];
+            if (count($dcs) == 1) {
+                $dn = substr($dcs[0], strpos($dcs[0],'.')+1);
+                self::addVar('dn', '@'.$dn);
+            } elseif (count($dcs) >1) {
+                self::addVar('dc', $dcs);
+            }
+            return false;
+        }
     }
 
 
@@ -135,26 +188,23 @@ class core
     }
 
 
-    /**
-     * @param string $template
-     */
-    public static function render($template = 'auth.twig')
+    public static function render()
     {
-        echo self::$twig->render($template, self::$twVars);
+        echo self::$twig->render(self::$currTemplate, self::$twVars);
     }
 
 
     /**
      * Adding your own var to the $twVars array for twig
      *
-     * @param string $var Name of variable
-     * @param string $value Value of variable
+     * @param string|array $var Name of variable
+     * @param mixed $value Value of variable
      * @return bool
      */
     public static function addVar($var = '', $value = '')
     {
         if ($var != '' and $value != '') {
-            self::$twVars[$var] = $value;
+            self::$twVars['data'][$var] = $value;
             return true;
         }
         return false;
@@ -170,7 +220,7 @@ class core
     public static function getVar($var = '')
     {
         if ($var != '' and array_key_exists($var, self::$twVars)) {
-            return self::$twVars[$var];
+            return self::$twVars['data'][$var];
         }
         return false;
     }

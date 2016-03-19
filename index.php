@@ -28,6 +28,8 @@ $rendertime = microtime(true)-$rstart;
 
 core::$session->set('user_ip', $_SERVER['REMOTE_ADDR'], true);
 
+//var_dump(core::$twVars['data']);
+
 //echo core::$session->user_ip;
 //echo core::$param->lang;
 

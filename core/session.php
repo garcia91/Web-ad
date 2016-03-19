@@ -51,7 +51,7 @@ class session
     {
         if (isset($_SESSION[$key])) {
             return $_SESSION[$key];
-        } else return null;
+        } else return false;
     }
 
 
@@ -64,6 +64,11 @@ class session
         return $this->get($name);
     }
 
+    public function __set($name, $value)
+    {
+        return $this->set($name, $value);
+    }
+
     /**
      * @param $key string
      * @return string
@@ -72,7 +77,7 @@ class session
     {
         if (isset($_COOKIE[$key])) {
             return $_COOKIE[$key];
-        } else return null;
+        } else return false;
     }
 
     /**

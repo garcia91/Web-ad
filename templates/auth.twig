@@ -19,21 +19,25 @@
         <div class="row">
             <div class="col-xs-12  col-sm-12 col-lg-6 col-lg-offset-3">
                 <form method="post" action=".">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <span data-toggle="tooltip" data-placement="left" title="{{ authform_ttdc }}" class="input-group-addon"><span class="glyphicon glyphicon-home"></span></span>
-                            <select name="dc" class="form-control">
-                                <option>cyclop.s-tech.ru</option>
-                                <option>dc1.ru</option>
-                            </select>
+                    {% if data.dc|length > 1 %}
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span data-toggle="tooltip" data-placement="left" title="{{ authform_ttdc }}"
+                                      class="input-group-addon"><span class="glyphicon glyphicon-home"></span></span>
+                                <select title="" name="dc" class="form-control">
+                                    {% for dc in data.dc %}
+                                        <option>{{ dc }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                     <div class="form-group">
                         <div class="input-group">
                             <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
                             <input type="text" placeholder="{{ authform_login }}" class="form-control" id="auth-login"
                                    name="login">
-                            <span class="input-group-addon" id="login_suff"></span>
+                            <span class="input-group-addon" id="login_suff">{{ data.dn }}</span>
                         </div>
                     </div>
                     <div class="form-group">
@@ -63,24 +67,25 @@
         </div>
     </div>
 
+    {% if not data.dn %}
+        <script>
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+                var curr_dc = $('select option:selected').html();
+                $('select').change(function () {
+                    curr_dc = $('select option:selected').html();
+                    check_suff();
+                });
+                function check_suff() {
+                    var arr = curr_dc.split('.');
+                    arr.splice(0, 1);
+                    var str = arr.join('.');
+                    $('#login_suff').html('@' + str);
+                }
 
-    <script>
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-            var curr_dc = $('select option:selected').html();
-            $('select').change(function () {
-                curr_dc = ($('select option:selected').html())
                 check_suff();
-            });
-            function check_suff () {
-                var arr = curr_dc.split('.');
-                arr.splice(0,1);
-                var str = arr.join('.');
-                $('#login_suff').html('@'+str) ;
-            }
-            check_suff();
-        })
-    </script>
-
+            })
+        </script>
+    {% endif %}
 {% endblock %}
 
