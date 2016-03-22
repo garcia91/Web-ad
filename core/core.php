@@ -124,8 +124,9 @@ class core
         self::$log = new logger();
         self::$param = new request();
         self::checkParam();
-        self::checkLogon();
         self::connectAd();
+        self::checkLogon();
+
 
 
     }
@@ -135,9 +136,13 @@ class core
         if ($action = self::$param->act) {
             switch ($action) {
                 case 'auth':
+                    self::$session->clearAll(true);
                     self::$session->dc = self::$param->dc;
                     self::$session->username = self::$param->login;
                     self::$session->userpass = self::$param->password;
+                    break;
+                case 'exit':
+                    self::$session->destroy();
                     break;
             }
 
@@ -272,7 +277,12 @@ class core
                 if ($c == -1) $c=99;
                 $m = $e->getMessage();
                 self::addVar('error', array("code" => $c, "message" => $m));
+                self::$session->user_logon = false;
             }
+            if (self::$ad) {
+                self::$session->user_logon = true;
+            }
+
         }
     }
 

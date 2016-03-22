@@ -69,6 +69,11 @@ class session
         return $this->set($name, $value);
     }
 
+    public function getAll()
+    {
+        return $_SESSION;
+    }
+
     /**
      * @param $key string
      * @return string
