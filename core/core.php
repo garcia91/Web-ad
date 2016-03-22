@@ -8,6 +8,8 @@
 
 namespace webad;
 
+use Adldap\Connections\Configuration;
+use Adldap\Exceptions\AdldapException;
 
 class core
 {
@@ -96,6 +98,12 @@ class core
      */
     public static $ad;
 
+
+    /**
+     * @var Configuration
+     */
+    public static $adConfig;
+
     //###########################################################
     /**
      * core constructor.
@@ -117,12 +125,13 @@ class core
         self::$param = new request();
         self::checkParam();
         self::checkLogon();
-
+        self::connectAd();
 
 
     }
 
-    private static function checkParam() {
+    private static function checkParam()
+    {
         if ($action = self::$param->act) {
             switch ($action) {
                 case 'auth':
@@ -150,9 +159,9 @@ class core
             self::$currTemplate = "auth.twig";
             $dcs = self::$config['dc'];
             if (count($dcs) == 1) {
-                $dn = substr($dcs[0], strpos($dcs[0],'.')+1);
-                self::addVar('dn', '@'.$dn);
-            } elseif (count($dcs) >1) {
+                $dn = substr($dcs[0], strpos($dcs[0], '.') + 1);
+                self::addVar('dn', '@' . $dn);
+            } elseif (count($dcs) > 1) {
                 self::addVar('dc', $dcs);
             }
             return false;
@@ -184,7 +193,13 @@ class core
         self::$i18n = new \i18n($langPath, $langCache);
         self::$i18n->init();
         $l = new \ReflectionClass('L');
-        self::$twVars = $l->getConstants();
+        $arr1 = $l->getConstants();
+        $arr2 = array();
+        foreach ($arr1 as $index => $item) {
+            $k = explode('_',$index);
+            $arr2['L'][$k[0]][$k[1]] = $item;
+        }
+        self::$twVars = $arr2;
     }
 
 
@@ -226,6 +241,40 @@ class core
     }
 
 
+    /**
+     * Configure settings for connection to DC
+     * @return bool
+     * @throws \Adldap\Exceptions\ConfigurationException
+     */
+    private static function prepareAd()
+    {
+        if (self::$session->dc && self::$session->username && self::$session->userpass) {
+            self::$adConfig = new Configuration();
+            self::$adConfig->setDomainControllers(array(self::$session->dc));
+            self::$adConfig->setAdminUsername(self::$session->username);
+            self::$adConfig->setAdminPassword(self::$session->userpass);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * try to connect to DC, using credentials form $adConfig
+     */
+    private static function connectAd()
+    {
+        if (self::prepareAd()) {
+            try {
+                self::$ad = new ad(self::$adConfig);
+            } catch (AdldapException $e) {
+                $c = $e->getCode();
+                if ($c == -1) $c=99;
+                $m = $e->getMessage();
+                self::addVar('error', array("code" => $c, "message" => $m));
+            }
+        }
+    }
 
 
 }

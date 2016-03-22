@@ -1,7 +1,7 @@
 {% extends "base.twig" %}
 
 {# page title #}
-{% block pagetitle %}{{ pagetitle_main }}{% endblock %}
+{% block pagetitle %}{{ L.pagetitle.main }}{% endblock %}
 
 {# content of navigation bar #}
 {% block navbar %}
@@ -39,13 +39,6 @@
 {# body content #}
 {% block pagecontent %}
 
-<h1>
-    {{ greeting }}
-</h1>
 
-    <p>
-
-        {{ bye }}
-    </p>
 
 {% endblock %}
