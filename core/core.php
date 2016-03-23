@@ -281,6 +281,9 @@ class core
             }
             if (self::$ad) {
                 self::$session->user_logon = true;
+                $userm = self::$ad->users()->find(self::$session->username, ['cn','displayName']);
+                $usern = $userm->getCommonName();
+                self::addVar('user', $usern);
             }
 
         }

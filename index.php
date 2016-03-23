@@ -22,7 +22,7 @@ core::init();
 core::render();
 
 
-//var_dump(core::$twVars);
+//var_dump(core::$twVars['data']);
 
 //echo core::$session->user_ip;
 //echo core::$param->lang;
