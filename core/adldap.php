@@ -11,6 +11,7 @@ namespace webad;
 use Adldap\Connections\Configuration;
 use Adldap\Models;
 use Adldap\Exceptions\AdldapException;
+use Adldap\Schemas\ActiveDirectory;
 
 class ad extends \Adldap\Adldap
 {
@@ -117,6 +118,50 @@ class ad extends \Adldap\Adldap
         }
 
         return true;
+    }
+
+
+    /**
+     * Return array of folders (CN,OU,builtinDomain) in selected baseDN
+     *
+     * @param string $path Path to baseDN to receive nonrecursive folders
+     * @param bool $checkChild Set if its need to check child folders
+     * @return array|bool
+     */
+    public function getFolders($path = '', $checkChild = false)
+    {
+        // set baseDN path
+        if (strlen($path)) {
+            core::$adConfig->setBaseDn($path);
+        } else {
+            $path = $this->getBaseDN(core::$adConfig);
+        }
+        $result = array();
+        // searching folders in AD (OrganizationalUnit or Container or BuiltinDomain)
+        $folders = $this->search()->recursive(false)->
+        orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::OBJECT_CATEGORY_CONTAINER)->
+        orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::ORGANIZATIONAL_UNIT_LONG)->
+        orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, 'builtinDomain')->
+        get()->getValues();
+        // returning if there are childs in this baseDN
+        if ($checkChild) {
+            return count($folders) ? true : false;
+        }
+
+        foreach ($folders as $key => $folder) {
+            // get current type of folder to make new path
+            if ($folder instanceof Models\OrganizationalUnit) {
+                $ct = 'OU=';
+            } else {
+                $ct = 'CN=';
+            }
+            $result[$key]['name'] = $folder->getName();
+            $result[$key]['type'] = $folder->getObjectCategory();
+            $result[$key]['hasChilds'] = $this->getFolders($ct.$folder->getName().','.$path,true);
+        }
+        sort($result);
+        reset($result);
+        return $result;
     }
 
 

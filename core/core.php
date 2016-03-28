@@ -8,8 +8,10 @@
 
 namespace webad;
 
+use Adldap\Adldap;
 use Adldap\Connections\Configuration;
 use Adldap\Exceptions\AdldapException;
+use Adldap\Schemas\ActiveDirectory;
 
 class core
 {
@@ -126,9 +128,6 @@ class core
         self::checkParam();
         self::connectAd();
         self::checkLogon();
-
-
-
     }
 
     private static function checkParam()
@@ -284,6 +283,11 @@ class core
                 $userm = self::$ad->users()->find(self::$session->username, ['cn','displayName']);
                 $usern = $userm->getCommonName();
                 self::addVar('user', $usern);
+
+                $folder = self::$ad->getFolders();
+                var_dump($folder);
+                exit;
+
             }
 
         }

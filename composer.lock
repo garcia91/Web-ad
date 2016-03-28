@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "adldap2/adldap2",
-            "version": "v5.2.15",
+            "version": "v5.2.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Adldap2/Adldap2.git",
-                "reference": "df046b03133d9db71af3a96fb1d815ea0ebb6997"
+                "reference": "9d46a0e5fb70752eae3d1d648676ececa19e440b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/df046b03133d9db71af3a96fb1d815ea0ebb6997",
-                "reference": "df046b03133d9db71af3a96fb1d815ea0ebb6997",
+                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/9d46a0e5fb70752eae3d1d648676ececa19e440b",
+                "reference": "9d46a0e5fb70752eae3d1d648676ececa19e440b",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "ldap",
                 "windows"
             ],
-            "time": "2016-03-22 16:12:11"
+            "time": "2016-03-24 16:40:46"
         },
         {
             "name": "doctrine/collections",

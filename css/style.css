@@ -9,3 +9,20 @@ body {
 .auth-container {
     padding-top: 100px;
 }
+
+main {
+    min-height: calc(100vh - 51px);
+}
+main div {
+    min-height: inherit;
+}
+
+.left-col {
+    background-color: #5bc0de;
+    min-height: inherit;
+}
+
+.right-col {
+    background-color: #4cae4c;
+    min-height: inherit;
+}
