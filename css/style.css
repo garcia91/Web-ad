@@ -20,9 +20,24 @@ main div {
 .left-col {
     background-color: #5bc0de;
     min-height: inherit;
+    padding: 0;
 }
 
 .right-col {
     background-color: #4cae4c;
     min-height: inherit;
+}
+
+#tree {
+    overflow: auto;
+    max-height: 200px;
+}
+
+#tree ul {
+    min-height: inherit;
+}
+
+/* restyle fancytree */
+ul.fancytree-container {
+    border: none;
 }

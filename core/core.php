@@ -125,8 +125,8 @@ class core
         self::initTwig(self::$twigTemplates, self::$twigConfig);
         self::$log = new logger();
         self::$param = new request();
-        self::checkParam();
         self::connectAd();
+        self::checkParam();
         self::checkLogon();
     }
 
@@ -139,9 +139,14 @@ class core
                     self::$session->dc = self::$param->dc;
                     self::$session->username = self::$param->login;
                     self::$session->userpass = self::$param->password;
+                    self::connectAd();
                     break;
                 case 'exit':
                     self::$session->destroy();
+                    break;
+                case 'get_folders':
+                    echo self::getFolders(self::$param->path);
+                    exit;
                     break;
             }
 
@@ -283,14 +288,24 @@ class core
                 $userm = self::$ad->users()->find(self::$session->username, ['cn','displayName']);
                 $usern = $userm->getCommonName();
                 self::addVar('user', $usern);
-
-                $folder = self::$ad->getFolders();
-                var_dump($folder);
-                exit;
-
             }
 
         }
+    }
+
+
+    private static function getFolders($path = "")
+    {
+        $folders = self::$ad->getFolders($path);
+        $result = array();
+        foreach ($folders as $index => $folder) {
+            $result[$index]['title'] = $folder['name'];
+            $result[$index]['folder'] = "true";
+            $result[$index]['lazy'] = $folder['hasChilds'];
+            $result[$index]['key'] = 'k_'.$index;
+        }
+        $result = json_encode($result);
+        return $result;
     }
 
 
