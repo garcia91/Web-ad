@@ -4,14 +4,42 @@
 
 
 $(function() {
+    //create folders tree
     $("#tree").fancytree({
-        extensions : ["glyph"],
+        extensions : ["glyph", "persist", "wide"],
         glyph: glyph_opts,
+        generateIds: true,
+        idPrefix: "ftt_",
+        cookieId: "ftt_",
         source : {
             url: "index.php",
             data: {
                 act: "get_folders"
             }
+        },
+        lazyLoad: function (event, data) {
+            data.result = {
+                url: "index.php",
+                data: {
+                    act: "get_folders",
+                    path: data.node.key
+                }
+            }
+        },
+        toggleEffect: {
+            effect: "drop",
+            options: {
+                direction: "left"
+            },
+            duration: 200
+        },
+        wide: {
+            iconWidth: "1em",
+            iconSpacing: "0.5em",
+            levelOfs: "1.5em"
+        },
+        persist: {
+            expandLazy: true
         }
 
 

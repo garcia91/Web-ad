@@ -131,33 +131,25 @@ class ad extends \Adldap\Adldap
     public function getFolders($path = '', $checkChild = false)
     {
         // set baseDN path
-        if (strlen($path)) {
+        if ($path) {
             core::$adConfig->setBaseDn($path);
-        } else {
-            $path = $this->getBaseDN(core::$adConfig);
         }
-        $result = array();
         // searching folders in AD (OrganizationalUnit or Container or BuiltinDomain)
         $folders = $this->search()->recursive(false)->
-        orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::OBJECT_CATEGORY_CONTAINER)->
-        orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::ORGANIZATIONAL_UNIT_LONG)->
-        orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, 'builtinDomain')->
-        get()->getValues();
+            orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::OBJECT_CATEGORY_CONTAINER)->
+            orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::ORGANIZATIONAL_UNIT_LONG)->
+            orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, 'builtinDomain')->
+            get()->getValues();
         // returning if there are childs in this baseDN
         if ($checkChild) {
             return count($folders) ? true : false;
         }
-
+        $result = array();
         foreach ($folders as $key => $folder) {
-            // get current type of folder to make new path
-            if ($folder instanceof Models\OrganizationalUnit) {
-                $ct = 'OU=';
-            } else {
-                $ct = 'CN=';
-            }
             $result[$key]['name'] = $folder->getName();
+            $result[$key]['dn'] = $folder->getDistinguishedName();
             $result[$key]['type'] = $folder->getObjectCategory();
-            $result[$key]['hasChilds'] = $this->getFolders($ct.$folder->getName().','.$path,true);
+            $result[$key]['hasChilds'] = $this->getFolders($result[$key]['dn'],true);
         }
         sort($result);
         reset($result);

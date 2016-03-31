@@ -120,13 +120,15 @@ class core
     public static function init()
     {
         self::$session = new session();
+        self::$param = new request();
+        self::$log = new logger();
+        self::connectAd();
+        self::checkParam();
         self::initConfiguration(self::$iniFile);
         self::initI18n(self::$i18nLangPath, self::$i18nCachePath);
         self::initTwig(self::$twigTemplates, self::$twigConfig);
-        self::$log = new logger();
-        self::$param = new request();
-        self::connectAd();
-        self::checkParam();
+
+
         self::checkLogon();
     }
 
@@ -145,7 +147,8 @@ class core
                     self::$session->destroy();
                     break;
                 case 'get_folders':
-                    echo self::getFolders(self::$param->path);
+                    $path = self::$param->get('path')?:'';
+                    echo self::getFolders($path);
                     exit;
                     break;
             }
@@ -202,13 +205,15 @@ class core
         self::$i18n = new \i18n($langPath, $langCache);
         self::$i18n->init();
         $l = new \ReflectionClass('L');
-        $arr1 = $l->getConstants();
+        $arrL = $l->getConstants();
         $arr2 = array();
-        foreach ($arr1 as $index => $item) {
+        foreach ($arrL as $index => $item) {
             $k = explode('_',$index);
-            $arr2['L'][$k[0]][$k[1]] = $item;
+            self::addVar($k,$item,'L');
+            $arr2[$k[0]][$k[1]] = $item;
         }
-        self::$twVars = $arr2;
+        self::$twVars["L"] = $arr2;
+        self::addVar('lang',self::$i18n->getAppliedLang());
     }
 
 
@@ -223,12 +228,13 @@ class core
      *
      * @param string|array $var Name of variable
      * @param mixed $value Value of variable
+     * @param string $node
      * @return bool
      */
-    public static function addVar($var = '', $value = '')
+    public static function addVar($var = '', $value = '', $node = 'data')
     {
         if ($var != '' and $value != '') {
-            self::$twVars['data'][$var] = $value;
+            self::$twVars[$node][$var] = $value;
             return true;
         }
         return false;
@@ -302,11 +308,18 @@ class core
             $result[$index]['title'] = $folder['name'];
             $result[$index]['folder'] = "true";
             $result[$index]['lazy'] = $folder['hasChilds'];
-            $result[$index]['key'] = 'k_'.$index;
+            $result[$index]['key'] = $folder['dn'];
         }
         $result = json_encode($result);
         return $result;
     }
 
+/*
+    private static function dnToKey($dn)
+    {
+        if ($dn) {
 
+        }
+    }
+*/
 }
