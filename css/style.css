@@ -18,20 +18,21 @@ main div {
 }
 
 .left-col {
-    background-color: #5bc0de;
     min-height: inherit;
     padding: 0;
 }
 
 .right-col {
-    background-color: #4cae4c;
     min-height: inherit;
+    border-left: 1px solid #dddddd ;
 }
 
-#tree {
+#tree, .objects-div {
     overflow: auto;
     max-height: 200px;
+    padding: 0;
 }
+
 
 #tree ul {
     min-height: inherit;

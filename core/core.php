@@ -151,6 +151,11 @@ class core
                     echo self::getFolders($path);
                     exit;
                     break;
+                case 'get_objects':
+                    $path = self::$param->get('path')?:'';
+                     echo self::getObjects($path);
+                    exit;
+                    break;
             }
 
         }
@@ -313,13 +318,19 @@ class core
         $result = json_encode($result);
         return $result;
     }
-
-/*
-    private static function dnToKey($dn)
+    
+    
+    private static function getObjects($path = "")
     {
-        if ($dn) {
-
-        }
+        if ($objects = self::$ad->getObjects($path)) {
+            $result = array();
+            foreach ($objects as $index => $object) {
+                $result[$index]['title'] = $object['name'];
+                $result[$index]['folder'] = $object['folder'];
+                $result[$index]['key'] = $object['dn'];
+            }
+            $result = json_encode($result);
+            return $result;
+        } else return '[]';
     }
-*/
 }

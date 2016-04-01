@@ -158,5 +158,40 @@ class ad extends \Adldap\Adldap
         return $result;
     }
 
+    /**
+     * @param string $path
+     * @return array|bool
+     */
+    public function getObjects($path) {
+        if ($path) {
+            core::$adConfig->setBaseDn($path);
+        }
+        $objects = $this->search()->recursive(false)->whereHas('name')->
+            select("name")->get()->getValues();
+        if (!$objects) return false;
+        $result = array();
+        foreach ($objects as $key => $object) {
+            $result[$key]['name'] = $object->getName();
+            $result[$key]['dn'] = $object->getDistinguishedName();
+            $result[$key]['type'] = $object->getObjectCategory();
+            $result[$key]['folder'] = $this->isFolder($object);
+        }
+        sort($result);
+        reset($result);
+        return $result;
+    }
+
+
+    /**
+     * @param Models\Entry $model
+     * @return bool
+     */
+    private function isFolder($model)
+    {
+        $type = $model->getObjectCategory();
+        $folders = array('Organizational-Unit', 'Builtin-Domain', 'Container');
+        return in_array($type, $folders);
+    }
+
 
 }
