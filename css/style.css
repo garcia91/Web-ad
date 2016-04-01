@@ -40,4 +40,25 @@ main div {
 /* restyle fancytree */
 ul.fancytree-container {
     border: none;
+    font-size: 20px;
+}
+
+#navbar_tree_btn {
+    float: left;
+    color: white;
+    margin-left: 15px;
+    margin-right: 0;
+    height: 36px;
+}
+#navbar_tree_btn:active {
+    background: none;
+}
+
+@media (min-width: 768px) {
+    #main-row div {
+        display: block !important;
+    }
+    ul.fancytree-container {
+        font-size: 14px !important;
+    }
 }

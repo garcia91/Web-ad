@@ -11,13 +11,21 @@
     <link type="text/css" rel="stylesheet" href="./css/ui.fancytree.css">
     <link type="text/css" rel="stylesheet" href="./css/style.css">
 
+    <script type="text/javascript">
+        //lang_strings:
+        ft_strings = {
+            loading: "{{ L.js.loading }}",
+            loadError: "{{ L.js.loadError }}",
+            moreData: "{{ L.js.moreData }}",
+            noData: "{{ L.js.noData }}"
+        }
+    </script>
     <script type="text/javascript" src="./js/jquery-1.12.1.min.js"></script>
     <script type="text/javascript" src="./js/js.cookie.js"></script>
     <script type="text/javascript" src="./js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="./js/bootstrap.min.js"></script>
     <script type="text/javascript" src="./js/jquery.fancytree-all.js"></script>
     <script type="text/javascript" src="./js/script.js"></script>
-    <script type="text/javascript" src="./l10n/lang_{{ data.lang }}.js"></script>
 
     <title>Web-AD: {% block pagetitle %}{% endblock %}</title>
 </head>
@@ -26,7 +34,13 @@
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed {% block authhide %}{% endblock %}"
+                <button type="button"
+                        id="navbar_tree_btn"
+                        aria-expanded="false"
+                        class="btn navbar-toggle collapsed {% block authhide %}{% endblock %}">
+                    <span class="glyphicon glyphicon-th-list "></span>
+                </button>
+                <button type="button" class="navbar-toggle collapsed {% block authhide1 %}{% endblock %}"
                         data-toggle="collapse" data-target="#bs-navbar-collapse-2" aria-expanded="false">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>

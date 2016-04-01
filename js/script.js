@@ -40,11 +40,18 @@ $(function() {
         },
         persist: {
             expandLazy: true
-        }
+        },
+        strings: ft_strings
 
 
-    })
-    
+    });
+
+    //collapsing
+    $("#navbar_tree_btn").click(function () {
+        $("#main-row .collapse").collapse('toggle');
+        $("#navbar_tree_btn").toggleClass('active');
+
+    });
     
 });
 
@@ -66,4 +73,7 @@ glyph_opts = {
         loading: "glyphicon glyphicon-refresh glyphicon-spin"
     }
 };
+
+
+
 

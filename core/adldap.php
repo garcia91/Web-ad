@@ -134,15 +134,17 @@ class ad extends \Adldap\Adldap
         if ($path) {
             core::$adConfig->setBaseDn($path);
         }
+
         // searching folders in AD (OrganizationalUnit or Container or BuiltinDomain)
         $folders = $this->search()->recursive(false)->
-            orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::OBJECT_CATEGORY_CONTAINER)->
-            orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, ActiveDirectory::ORGANIZATIONAL_UNIT_LONG)->
-            orWhereEquals(ActiveDirectory::OBJECT_CATEGORY, 'builtinDomain')->
+            orWhere("objectcategory", "=", "container")->
+            orWhere("objectcategory", "=", "organizationalunit")->
+            orWhere("objectcategory", "=", 'builtinDomain')->
+            select("name")->
             get()->getValues();
         // returning if there are childs in this baseDN
         if ($checkChild) {
-            return count($folders) ? true : false;
+            return $folders ? true : false;
         }
         $result = array();
         foreach ($folders as $key => $folder) {
