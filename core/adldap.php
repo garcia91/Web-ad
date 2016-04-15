@@ -8,16 +8,35 @@
 
 namespace webad;
 
+use Adldap\Connections\Provider;
 use Adldap\Connections\Configuration;
 use Adldap\Models;
 use Adldap\Exceptions\AdldapException;
-use Adldap\Schemas\ActiveDirectory;
+use Adldap\Contracts\Connections\ConnectionInterface;
+use Adldap\Contracts\Schemas\SchemaInterface;
+use Adldap\Adldap;
 
-class ad extends \Adldap\Adldap
+
+class ad extends Provider
 {
 
+    /**
+     * Adldap instance
+     *
+     * @var Adldap
+     */
+    private $adInstance;
 
-    public function __construct($configuration, $connection = null, $autoConnect = true)
+
+
+    /**
+     * ad constructor.
+     *
+     * @param Configuration|array $configuration
+     * @param ConnectionInterface|null $connection
+     * @param SchemaInterface|null $schema
+     */
+    public function __construct($configuration = [], ConnectionInterface $connection = null, SchemaInterface $schema = null)
     {
         $suffix = $this->getAccountSuffix($configuration);
         $baseDN = $this->getBaseDN($configuration);
@@ -28,9 +47,25 @@ class ad extends \Adldap\Adldap
             $configuration->setBaseDn($baseDN);
         }
         parent::__construct($configuration);
+        $this->adInstance = new Adldap();
+        $this->adInstance->addProvider('default', $this);
+        $this->adInstance->connect('default');
     }
 
+    /* public function __construct($configuration, $connection = null, $autoConnect = true)
+     {
+         $suffix = $this->getAccountSuffix($configuration);
+         $baseDN = $this->getBaseDN($configuration);
+         if ($suffix) {
+             $configuration->setAccountSuffix($suffix);
+         }
+         if ($baseDN) {
+             $configuration->setBaseDn($baseDN);
+         }
+         parent::__construct($configuration);
+     }
 
+ */
     /**
      *
      * @param $config Configuration
@@ -82,7 +117,7 @@ class ad extends \Adldap\Adldap
      * @return bool
      * @throws AdldapException
      */
-    protected function bindUsingCredentials($username, $password, $suffix = null)
+ /*   protected function bindUsingCredentials($username, $password, $suffix = null)
     {
         if (empty($username)) {
             // Allow binding with null username.
@@ -113,14 +148,14 @@ class ad extends \Adldap\Adldap
             } else {
                 $message = 'Bind to Active Directory failed. Check the login credentials and/or server details. AD said: '.$error;
             }*/
-
+/*
             throw new AdldapException($errorM, $errorC);
         }
 
         return true;
     }
 
-
+*/
     /**
      * Return array of folders (CN,OU,builtinDomain) in selected baseDN
      *
@@ -141,16 +176,18 @@ class ad extends \Adldap\Adldap
             orWhere("objectcategory", "=", "organizationalunit")->
             orWhere("objectcategory", "=", 'builtinDomain')->
             select("name")->
-            get()->getValues();
+            get()->all();
+
         // returning if there are childs in this baseDN
         if ($checkChild) {
             return $folders ? true : false;
         }
         $result = array();
         foreach ($folders as $key => $folder) {
-            $result[$key]['name'] = $folder->getName();
+            $result[$key]['name'] = $folder->getAttribute('name');
             $result[$key]['dn'] = $folder->getDistinguishedName();
-            $result[$key]['type'] = $folder->getObjectCategory();
+            //$result[$key]['type'] = $folder->getObjectCategory();
+            $result[$key]['type'] =   (new \ReflectionClass($folder))->getShortName();
             $result[$key]['hasChilds'] = $this->getFolders($result[$key]['dn'],true);
         }
         sort($result);
@@ -167,13 +204,13 @@ class ad extends \Adldap\Adldap
             core::$adConfig->setBaseDn($path);
         }
         $objects = $this->search()->recursive(false)->whereHas('name')->
-            select("name")->get()->getValues();
+            select("name")->get()->all();
         if (!$objects) return false;
         $result = array();
         foreach ($objects as $key => $object) {
-            $result[$key]['name'] = $object->getName();
+            $result[$key]['name'] = $object->getAttribute('name');
             $result[$key]['dn'] = $object->getDistinguishedName();
-            $result[$key]['type'] = $object->getObjectCategory();
+            $result[$key]['type'] = (new \ReflectionClass($object))->getShortName();
             $result[$key]['folder'] = $this->isFolder($object);
         }
         sort($result);
@@ -188,8 +225,8 @@ class ad extends \Adldap\Adldap
      */
     private function isFolder($model)
     {
-        $type = $model->getObjectCategory();
-        $folders = array('Organizational-Unit', 'Builtin-Domain', 'Container');
+        $type = (new \ReflectionClass($model))->getShortName();
+        $folders = array('OrganizationalUnit', 'Container');
         return in_array($type, $folders);
     }
 

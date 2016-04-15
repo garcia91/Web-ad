@@ -8,10 +8,13 @@
 
 namespace webad;
 
-use Adldap\Adldap;
+
 use Adldap\Connections\Configuration;
 use Adldap\Exceptions\AdldapException;
-use Adldap\Schemas\ActiveDirectory;
+use Adldap\Exceptions\Auth\BindException;
+use Adldap\Exceptions\ConnectionException;
+
+
 
 class core
 {
@@ -121,7 +124,7 @@ class core
     {
         self::$session = new session();
         self::$param = new request();
-        self::$log = new logger();
+        //self::$log = new logger();
         self::connectAd();
         self::checkParam();
         self::initConfiguration(self::$iniFile);
@@ -287,20 +290,31 @@ class core
         if (self::prepareAd()) {
             try {
                 self::$ad = new ad(self::$adConfig);
-            } catch (AdldapException $e) {
+            } catch (BindException $e) {
+                self::$session->del('dc');
+                self::$session->del('username');
+                self::$session->del('userpass');
                 $c = $e->getCode();
                 if ($c == -1) $c=99;
                 $m = $e->getMessage();
-                self::addVar('error', array("code" => $c, "message" => $m));
+                self::addVar('error', array("code" => $c, "message" => 'проблема bind'));
+                self::$session->user_logon = false;
+            } catch (ConnectionException $e) {
+                self::$session->del('dc');
+                self::$session->del('username');
+                self::$session->del('userpass');
+                $c = $e->getCode();
+                if ($c == -1) $c=99;
+                $m = $e->getMessage();
+                self::addVar('error', array("code" => $c, "message" => 'проблема соединения'));
                 self::$session->user_logon = false;
             }
             if (self::$ad) {
                 self::$session->user_logon = true;
-                $userm = self::$ad->users()->find(self::$session->username, ['cn','displayName']);
-                $usern = $userm->getCommonName();
-                self::addVar('user', $usern);
+                $user = self::$ad->search()->users()->
+                    find(self::$session->username, ['cn','displayName'])->getCommonName();
+                self::addVar('user', $user);
             }
-
         }
     }
 
