@@ -297,16 +297,7 @@ class core
                 $c = $e->getCode();
                 if ($c == -1) $c=99;
                 $m = $e->getMessage();
-                self::addVar('error', array("code" => $c, "message" => 'проблема bind'));
-                self::$session->user_logon = false;
-            } catch (ConnectionException $e) {
-                self::$session->del('dc');
-                self::$session->del('username');
-                self::$session->del('userpass');
-                $c = $e->getCode();
-                if ($c == -1) $c=99;
-                $m = $e->getMessage();
-                self::addVar('error', array("code" => $c, "message" => 'проблема соединения'));
+                self::addVar('error', array("code" => $c, "message" => $m));
                 self::$session->user_logon = false;
             }
             if (self::$ad) {

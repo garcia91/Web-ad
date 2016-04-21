@@ -11,7 +11,6 @@ namespace webad;
 use Adldap\Connections\Provider;
 use Adldap\Connections\Configuration;
 use Adldap\Models;
-use Adldap\Exceptions\AdldapException;
 use Adldap\Contracts\Connections\ConnectionInterface;
 use Adldap\Contracts\Schemas\SchemaInterface;
 use Adldap\Adldap;
@@ -52,20 +51,8 @@ class ad extends Provider
         $this->adInstance->connect('default');
     }
 
-    /* public function __construct($configuration, $connection = null, $autoConnect = true)
-     {
-         $suffix = $this->getAccountSuffix($configuration);
-         $baseDN = $this->getBaseDN($configuration);
-         if ($suffix) {
-             $configuration->setAccountSuffix($suffix);
-         }
-         if ($baseDN) {
-             $configuration->setBaseDn($baseDN);
-         }
-         parent::__construct($configuration);
-     }
 
- */
+
     /**
      *
      * @param $config Configuration
@@ -108,54 +95,7 @@ class ad extends Provider
         }
     }
 
-    /**
-     * Overriding parent method with adding error code to exception
-     *
-     * @param string $username
-     * @param string $password
-     * @param null $suffix
-     * @return bool
-     * @throws AdldapException
-     */
- /*   protected function bindUsingCredentials($username, $password, $suffix = null)
-    {
-        if (empty($username)) {
-            // Allow binding with null username.
-            $username = null;
-        } else {
-            if (is_null($suffix)) {
-                // If the suffix is null, we'll retrieve their
-                // account suffix from the configuration.
-                $suffix = $this->configuration->getAccountSuffix();
-            }
 
-            // If the username isn't empty, we'll append the configured
-            // account suffix to bind to the LDAP server.
-            $username .= $suffix;
-        }
-
-        if (empty($password)) {
-            // Allow binding with null password.
-            $password = null;
-        }
-
-        if ($this->connection->bind($username, $password) === false) {
-            $errorM = $this->connection->getLastError();
-            $errorC = $this->connection->errNo();
-
-            /*if ($this->connection->isUsingSSL() && $this->connection->isUsingTLS() === false) {
-                $message = 'Bind to Active Directory failed. Either the LDAPs connection failed or the login credentials are incorrect. AD said: '.$error;
-            } else {
-                $message = 'Bind to Active Directory failed. Check the login credentials and/or server details. AD said: '.$error;
-            }*/
-/*
-            throw new AdldapException($errorM, $errorC);
-        }
-
-        return true;
-    }
-
-*/
     /**
      * Return array of folders (CN,OU,builtinDomain) in selected baseDN
      *
@@ -184,10 +124,9 @@ class ad extends Provider
         }
         $result = array();
         foreach ($folders as $key => $folder) {
-            $result[$key]['name'] = $folder->getAttribute('name');
+            $result[$key]['name'] = $folder->getName();
             $result[$key]['dn'] = $folder->getDistinguishedName();
-            //$result[$key]['type'] = $folder->getObjectCategory();
-            $result[$key]['type'] =   (new \ReflectionClass($folder))->getShortName();
+            $result[$key]['type'] = $folder->getObjectCategory();
             $result[$key]['hasChilds'] = $this->getFolders($result[$key]['dn'],true);
         }
         sort($result);
@@ -208,9 +147,9 @@ class ad extends Provider
         if (!$objects) return false;
         $result = array();
         foreach ($objects as $key => $object) {
-            $result[$key]['name'] = $object->getAttribute('name');
+            $result[$key]['name'] = $object->getName();
             $result[$key]['dn'] = $object->getDistinguishedName();
-            $result[$key]['type'] = (new \ReflectionClass($object))->getShortName();
+            $result[$key]['type'] = $object->getObjectCategory();
             $result[$key]['folder'] = $this->isFolder($object);
         }
         sort($result);
@@ -225,8 +164,8 @@ class ad extends Provider
      */
     private function isFolder($model)
     {
-        $type = (new \ReflectionClass($model))->getShortName();
-        $folders = array('OrganizationalUnit', 'Container');
+        $type = $model->getObjectCategory();
+        $folders = array('Organizational-Unit', 'Builtin-Domain', 'Container');
         return in_array($type, $folders);
     }
 
