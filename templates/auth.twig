@@ -24,7 +24,7 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <span data-toggle="tooltip" data-placement="left" title="{{ L.authform.ttdc }}"
-                                      class="input-group-addon"><span class="glyphicon glyphicon-home"></span></span>
+                                      class="input-group-addon"><span class="fa fa-server fa-fw"></span></span>
                                 <select title="" name="dc" class="form-control">
                                     {% for dc in data.dc %}
                                         <option>{{ dc }}</option>
@@ -35,7 +35,7 @@
                     {% endif %}
                     <div class="form-group">
                         <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                            <span class="input-group-addon"><span class="fa fa-user fa-fw"></span></span>
                             <input type="text" placeholder="{{ L.authform.login }}" class="form-control" id="auth-login"
                                    name="login">
                             <span class="input-group-addon" id="login_suff">{{ data.dn }}</span>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                            <span class="input-group-addon"><span class="fa fa-key fa-fw"></span></span>
                             <input type="password" placeholder="{{ L.authform.password }}" class="form-control"
                                    id="auth-pass" name="password">
                         </div>
@@ -59,7 +59,7 @@
                         </div>
                         <div class="col-xs-12 col-sm-6">
                             <button type="submit" class="form-control btn btn-primary">
-                                <span class="glyphicon glyphicon-log-in"></span> {{ L.authform.submit }}</button>
+                                <span class="fa fa-sign-in fa-fw"></span> {{ L.authform.submit }}</button>
                         </div>
                     </div>
                     <input name="act" value="auth" type="hidden">

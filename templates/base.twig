@@ -9,6 +9,7 @@
     <link type="text/css" rel="stylesheet" href="./css/jquery-ui.css">
     <link type="text/css" rel="stylesheet" href="./css/schemas/bootstrap.cerulean.css">
     <link type="text/css" rel="stylesheet" href="./css/ui.fancytree.css">
+    <link type="text/css" rel="stylesheet" href="./css/font-awesome.min.css">
     <link type="text/css" rel="stylesheet" href="./css/style.css">
 
     <script type="text/javascript">
@@ -38,7 +39,7 @@
                         id="navbar_tree_btn"
                         aria-expanded="false"
                         class="btn navbar-toggle collapsed {% block authhide %}{% endblock %}">
-                    <span class="glyphicon glyphicon-th-list "></span>
+                    <span class="fa fa-list "></span>
                 </button>
                 <button type="button" class="navbar-toggle collapsed {% block authhide1 %}{% endblock %}"
                         data-toggle="collapse" data-target="#bs-navbar-collapse-2" aria-expanded="false">
@@ -57,7 +58,7 @@
     {% if data.error %}
         <div class="alert alert-dismissible alert-danger">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
-            <strong>{{ L.general.error }}</strong>
+            <strong><i class="fa fa-exclamation-triangle"> </i> {{ L.general.error }}</strong>
             {% if L.adldap[data.error.code] %}
                 {{ L.adldap[data.error.code] }}
             {% else %}
