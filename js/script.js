@@ -6,8 +6,8 @@
 //Some global vars
 glyph_opts = {
     map: {
-        doc: "fa fa-file-o",
-        docOpen: "fa fa-file-o",
+        doc: "fa fa-file-text",
+        docOpen: "fa fa-file-text",
         checkbox: "fa fa-square-o",
         checkboxSelected: "fa fa-check-square-o",
         checkboxUnknown: "fa fa-share-square-o",
@@ -17,9 +17,14 @@ glyph_opts = {
         expanderClosed: "fa fa-menu-right",
         expanderLazy: "fa fa-angle-right fa-fw",  // fa-plus-sign
         expanderOpen: "fa fa-angle-down fa-fw",  // fa-collapse-down
-        folder: "fa fa-folder-o",
-        folderOpen: "fa fa-folder-open-o",
-        loading: "fa fa-refresh fa-spin fa-fw"
+        folder: "fa fa-folder",
+        folderOpen: "fa fa-folder-open",
+        loading: "fa fa-refresh fa-spin fa-fw",
+        // my icons:
+        User: "fa fa-fw fa-user",
+        Computer: "fa fa-fw fa-desktop",
+        Group: "fa fa-fw fa-users",
+        Contact: "fa fa-fw fa-credit-card"
     }
 };
 selected_node = "";
@@ -88,6 +93,12 @@ $(function() {
         strings: ft_strings,
         extensions: ["persist", "table", "edit", "glyph" ],
         glyph: glyph_opts,
+        icon: function (e, data) {
+            type = data.node.data.type;
+            if (type) {
+                return glyph_opts.map[type];
+            }
+        },
         activate: function (event, data) {
         },
         table: {

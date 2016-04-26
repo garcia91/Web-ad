@@ -333,6 +333,7 @@ class core
                 $result[$index]['title'] = $object['name'];
                 $result[$index]['folder'] = $object['folder'];
                 $result[$index]['key'] = $object['dn'];
+                $result[$index]['data']['type'] = $object['type'];
             }
             $result = json_encode($result);
             return $result;

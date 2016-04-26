@@ -126,7 +126,7 @@ class ad extends Provider
         foreach ($folders as $key => $folder) {
             $result[$key]['name'] = $folder->getName();
             $result[$key]['dn'] = $folder->getDistinguishedName();
-            $result[$key]['type'] = $folder->getObjectCategory();
+            //$result[$key]['type'] = $folder->getObjectCategory();
             $result[$key]['hasChilds'] = $this->getFolders($result[$key]['dn'],true);
         }
         sort($result);
@@ -149,8 +149,9 @@ class ad extends Provider
         foreach ($objects as $key => $object) {
             $result[$key]['name'] = $object->getName();
             $result[$key]['dn'] = $object->getDistinguishedName();
-            $result[$key]['type'] = $object->getObjectCategory();
-            $result[$key]['folder'] = $this->isFolder($object);
+            //$result[$key]['type'] = $object->getObjectClass()->getName();
+            $result[$key]['type'] = (new \ReflectionClass($object))->getShortName();
+            $result[$key]['folder'] = $this->isFolder($result[$key]['type']);
         }
         sort($result);
         reset($result);
@@ -162,10 +163,10 @@ class ad extends Provider
      * @param Models\Entry $model
      * @return bool
      */
-    private function isFolder($model)
+    private function isFolder($type)
     {
-        $type = $model->getObjectCategory();
-        $folders = array('Organizational-Unit', 'Builtin-Domain', 'Container');
+        //$type = $model->getObjectCategory();
+        $folders = array('OrganizationalUnit', 'Builtin-Domain', 'Container');
         return in_array($type, $folders);
     }
 
