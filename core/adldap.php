@@ -110,17 +110,22 @@ class ad extends Provider
             core::$adConfig->setBaseDn($path);
         }
 
-        // searching folders in AD (OrganizationalUnit or Container or BuiltinDomain)
-        $folders = $this->search()->recursive(false)->
-            orWhere("objectcategory", "=", "container")->
-            orWhere("objectcategory", "=", "organizationalunit")->
-            orWhere("objectcategory", "=", 'builtinDomain')->
+        // returning if there are childs in this baseDN
+        if ($checkChild) {
+            $filter = "(|(objectcategory=container)(objectcategory=organizationalunit))";
+            $child = $this->search()->recursive(false)->rawFilter($filter)->select('')->first();
+            return $child ? true : false;
+        } else {
+            $filter = "(|(objectcategory=container)(objectcategory=organizationalunit)(objectcategory=builtinDomain))";
+            // searching folders in AD (OrganizationalUnit or Container or BuiltinDomain)
+            $folders = $this->search()->recursive(false)->rawFilter($filter)->
+            //      orWhere("objectcategory", "=", "container")->
+            //      orWhere("objectcategory", "=", "organizationalunit")->
+            //      orWhere("objectcategory", "=", 'builtinDomain')->
+
             select("name")->
             get()->all();
 
-        // returning if there are childs in this baseDN
-        if ($checkChild) {
-            return $folders ? true : false;
         }
         $result = array();
         foreach ($folders as $key => $folder) {

@@ -10,8 +10,9 @@ namespace webad;
 
 
 use Adldap\Connections\Configuration;
+use Adldap\Exceptions\AdldapException;
 use Adldap\Exceptions\Auth\BindException;
-
+use Adldap\Exceptions\ConnectionException;
 
 
 

@@ -6,19 +6,19 @@
 //Some global vars
 glyph_opts = {
     map: {
-        doc: "fa fa-file-text",
-        docOpen: "fa fa-file-text",
-        checkbox: "fa fa-square-o",
-        checkboxSelected: "fa fa-check-square-o",
-        checkboxUnknown: "fa fa-share-square-o",
+        doc: "fa fa-file-text fa-fw",
+        docOpen: "fa fa-file-text fa-fw",
+        checkbox: "fa fa-square-o fa-fw",
+        checkboxSelected: "fa fa-check-square-o fa-fw",
+        checkboxUnknown: "fa fa-share-square-o fa-fw",
         dragHelper: "fa fa-play",
         dropMarker: "fa fa-arrow-right",
         error: "fa fa-exclamation-triangle",
-        expanderClosed: "fa fa-menu-right",
-        expanderLazy: "fa fa-angle-right fa-fw",  // fa-plus-sign
-        expanderOpen: "fa fa-angle-down fa-fw",  // fa-collapse-down
-        folder: "fa fa-folder",
-        folderOpen: "fa fa-folder-open",
+        expanderClosed: "fa fa-caret-right fa-fw",
+        expanderLazy: "fa fa-caret-right fa-fw",  // fa-plus-sign
+        expanderOpen: "fa fa-caret-down fa-fw",  // fa-collapse-down
+        folder: "fa fa-folder fa-fw",
+        folderOpen: "fa fa-folder-open fa-fw",
         loading: "fa fa-refresh fa-spin fa-fw",
         // my icons:
         User: "fa fa-fw fa-user",
