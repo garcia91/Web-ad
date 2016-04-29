@@ -72,7 +72,6 @@
     {% if not data.dn %}
         <script>
             $(function () {
-                $('[data-toggle="tooltip"]').tooltip();
                 var curr_dc = $('select option:selected').html();
                 $('select').change(function () {
                     curr_dc = $('select option:selected').html();

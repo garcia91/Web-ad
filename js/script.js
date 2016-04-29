@@ -31,6 +31,7 @@ selected_node = "";
 
 
 $(function() {
+    $('[data-toggle="tooltip"]').tooltip();
     //create folders tree
     $("#tree").fancytree({
         extensions : ["glyph", "persist", "wide"],
