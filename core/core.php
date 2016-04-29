@@ -10,9 +10,8 @@ namespace webad;
 
 
 use Adldap\Connections\Configuration;
-use Adldap\Exceptions\AdldapException;
 use Adldap\Exceptions\Auth\BindException;
-use Adldap\Exceptions\ConnectionException;
+
 
 
 
@@ -309,7 +308,12 @@ class core
         }
     }
 
-
+    /**
+     * Return list of containers (OUs)
+     *
+     * @param string $path
+     * @return array
+     */
     private static function getFolders($path = "")
     {
         $folders = self::$ad->getFolders($path);
