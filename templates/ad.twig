@@ -1,38 +1,14 @@
 {% extends "base.twig" %}
 
 {# page title #}
-{% block pagetitle %}{{ L.pagetitle.main }}{% endblock %}
+{% block pagetitle %}
+    {{ L.pagetitle.main }}
+{% endblock %}
 
 {# content of navigation bar #}
 {% block navbar %}
-    <div class="collapse navbar-collapse" id="bs-navbar-collapse-2">
-        <ul class="nav navbar-nav">
-            <li class="active"><a class="navbar-link" id="ad" href=""><i class="fa fa-fw fa-book"></i> AD<span class="sr-only">(current)</span></a></li>
-            <li><a class="navbar-link" id="settings" href=""><i class="fa fa-fw fa-wrench"></i> {{ L.navbar.settings }}</a></li>
-            <li class="dropdown disabled">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-                    <i class="fa fa-fw fa-cogs"></i> {{ L.navbar.misc }}
-                    <span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                    <li><a href="#">{{ L.navbar.psettings }}</a></li>
-                    <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li>
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
-                </ul>
-            </li>
-        </ul>
-        <form class="navbar-form navbar-left" role="search">
-            <div class="form-group">
-                <input class="form-control" placeholder="{{ L.navbar.search }}" type="text">
-            </div>
-            {# <button type="submit" class="btn btn-default">{{ L.navbar.submit }}</button> #}
-        </form>
-        <ul class="nav navbar-nav navbar-right">
-            <li data-toggle="tooltip" data-placement="bottom" title="{{ L.navbar.ttexit }}" ><a href="?act=exit"><span class="fa fa-fw fa-sign-out"></span> {{ data.user }}</a></li>
-        </ul>
-    </div>
-
+    {% set active_page = {ad:"active"} %}
+    {% include "navbar.twig" %}
 {% endblock %}
 
 
