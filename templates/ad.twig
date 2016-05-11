@@ -7,8 +7,8 @@
 {% block navbar %}
     <div class="collapse navbar-collapse" id="bs-navbar-collapse-2">
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#"><i class="fa fa-fw fa-book"></i> AD<span class="sr-only">(current)</span></a></li>
-            <li class="disabled"><a href="#"><i class="fa fa-fw fa-wrench"></i> {{ L.navbar.settings }}</a></li>
+            <li class="active"><a class="navbar-link" id="ad" href=""><i class="fa fa-fw fa-book"></i> AD<span class="sr-only">(current)</span></a></li>
+            <li><a class="navbar-link" id="settings" href=""><i class="fa fa-fw fa-wrench"></i> {{ L.navbar.settings }}</a></li>
             <li class="dropdown disabled">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
                     <i class="fa fa-fw fa-cogs"></i> {{ L.navbar.misc }}
@@ -26,7 +26,7 @@
             <div class="form-group">
                 <input class="form-control" placeholder="{{ L.navbar.search }}" type="text">
             </div>
-            <button type="submit" class="btn btn-default">{{ L.navbar.submit }}</button>
+            {# <button type="submit" class="btn btn-default">{{ L.navbar.submit }}</button> #}
         </form>
         <ul class="nav navbar-nav navbar-right">
             <li data-toggle="tooltip" data-placement="bottom" title="{{ L.navbar.ttexit }}" ><a href="?act=exit"><span class="fa fa-fw fa-sign-out"></span> {{ data.user }}</a></li>

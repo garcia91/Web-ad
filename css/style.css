@@ -13,6 +13,11 @@ body {
 main {
     min-height: calc(100vh - 51px);
 }
+
+#settings-row {
+    padding-top: 20px;
+}
+
 main div {
     min-height: inherit;
 }

@@ -29,9 +29,37 @@ glyph_opts = {
 };
 selected_node = "";
 
+/**
+ *
+ *
+ * @param o Object <a> of pressed link on the navbar
+ */
+function callPage(o) {
+    $(".navbar-nav li.active").toggleClass("active");
+    o.parentNode.classList.add("active");
+    $.ajax({
+        url: '',
+        type: 'post',
+        data: {
+            act: 'change_page',
+            page: o.id
+        },
+        success: function(){
+            //location.reload();
+        }
+    });
+}
+
 
 $(function() {
+    //enable bs tooltips
     $('[data-toggle="tooltip"]').tooltip();
+
+    //
+    $(".navbar-link").click(function (e) {
+        callPage(this);
+    });
+
     //create folders tree
     $("#tree").fancytree({
         extensions : ["glyph", "persist", "wide"],

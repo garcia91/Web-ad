@@ -150,13 +150,18 @@ class core
                     self::$session->destroy();
                     break;
                 case 'get_folders':
-                    $path = self::$param->get('path')?:'';
+                    $path = self::$param->get('path') ?: '';
                     echo self::getFolders($path);
                     exit;
                     break;
                 case 'get_objects':
-                    $path = self::$param->get('path')?:'';
-                     echo self::getObjects($path);
+                    $path = self::$param->get('path') ?: '';
+                    echo self::getObjects($path);
+                    exit;
+                    break;
+                case 'change_page':
+                    $page = self::$param->get('page');
+                    self::setPage($page);
                     exit;
                     break;
             }
@@ -173,10 +178,14 @@ class core
     private static function checkLogon()
     {
         if (self::$session->user_logon) {
-            self::$currTemplate = "index.twig";
+            if (self::$session->get("page")) {
+                self::setPage(self::$session->get("page"));
+            } else {
+                self::setPage("ad");
+            }
             return true;
         } else {
-            self::$currTemplate = "auth.twig";
+            self::setPage();
             $dcs = self::$config['dc'];
             if (count($dcs) == 1) {
                 $dn = substr($dcs[0], strpos($dcs[0], '.') + 1);
@@ -184,6 +193,25 @@ class core
             } elseif (count($dcs) > 1) {
                 self::addVar('dc', $dcs);
             }
+            return false;
+        }
+    }
+
+
+    /**
+     * Set current twig template
+     *
+     * @param string $template
+     * @return bool
+     */
+    public function setPage($template = "auth")
+    {
+        if (file_exists("./templates/".$template.".twig")) {
+            self::$currTemplate = $template.".twig";
+            self::$session->set("page", $template);
+            return true;
+        } else {
+            self::addVar('error', array("code" => 404, "message" => "Page not found: ".$template.".twig"));
             return false;
         }
     }

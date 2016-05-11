@@ -59,8 +59,8 @@
         <div class="alert alert-dismissible alert-danger">
             <button type="button" class="close" data-dismiss="alert">&times;</button>
             <strong><i class="fa fa-exclamation-triangle"> </i> {{ L.general.error }}</strong>
-            {% if L.adldap[data.error.code] %}
-                {{ L.adldap[data.error.code] }}
+            {% if L.errors[data.error.code] %}
+                {{ L.errors[data.error.code] }} ({{ data.error.message }})
             {% else %}
                 {{ data.error.message }}
             {% endif %}
