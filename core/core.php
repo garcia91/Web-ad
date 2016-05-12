@@ -164,6 +164,26 @@ class core
                     self::setPage($page);
                     exit;
                     break;
+                case "check_locked":
+                    echo self::$ad->getLocked(true);
+                    exit;
+                    break;
+                case "get_locked":
+                    echo json_encode(self::$ad->getLocked());
+                    exit;
+                    break;
+                case "unlock":
+                    $lUsers = self::$param->get("ul");
+                    foreach ($lUsers as $lUser) {
+                        $result = self::$ad->unlockUser($lUser);
+                        if ($result!="ok") {
+                            echo $result;
+                            exit;
+                        }
+                    }
+                    echo "ok";
+                    exit;
+                    break;
             }
 
         }

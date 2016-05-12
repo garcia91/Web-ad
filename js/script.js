@@ -28,9 +28,9 @@ glyph_opts = {
     }
 };
 selected_node = "";
+notifications = 0;
 
 /**
- *
  *
  * @param o Object <a> of pressed link on the navbar
  */
@@ -51,7 +51,113 @@ function callPage(o) {
 }
 
 
+function check_locked() {
+    $.get(
+        ".",
+        {act: "check_locked"},
+        function (data) {
+            if (data >0) {
+                bell.removeClass("fa-bell-slash");
+                bell.addClass("fa-bell");
+                if (document.title.indexOf('(*)')) document.title = "(*) "+ document.title;
+                $("#navbar_bell > ul > li").remove();
+                $('#navbar_bell > ul').append("<li><a id='get_locked' href='#'>"+notif.locked+" <span class='badge'></span></a></li>");
+                $("#navbar_bell .badge").html(data);
+                $("#get_locked").click(get_locked);
+                notifications = data;
+            } else if (notifications) {
+                bell.removeClass("fa-bell");
+                bell.addClass("fa-bell-slash");
+                $("#navbar_bell > ul > li").remove();
+                $('#navbar_bell > ul').append("<li class='disabled'><a href='#'>"+notif.nothing+"</a></li>");
+                $("#navbar_bell .badge").html("");
+                notifications = 0;
+            }
+        }
+    )
+}
+
+function get_locked() {
+    $.get(
+        ".",
+        {act:"get_locked"},
+        function (data) {
+            if (data != "false") {
+                $("#myModalLabel").html(mymodal.locked_title);
+                $("#myModal .btn-primary").html(mymodal.unlock);
+                var templatediv = "<table id='locked_list'>" +
+                    "<thead><tr>" +
+                    "<th></th><th>"+mymodal.user+"</th><th>"+mymodal.locktime+"</th>" +
+                    "</tr></thead>" +
+                    "<tbody></tbody></div>";
+                $("#myModalBody").html(templatediv);
+                $("#locked_list").addClass("table")
+                    .addClass("table-condensed")
+                    .addClass("table-striped")
+                    .addClass("table-hover")
+                    .addClass("table-responsive");
+                pdata = JSON.parse(data);
+                $("#locked_list").fancytree({
+                    idPrefix: "ftlu_",
+                    cookieId: "ftlu_",
+                    source: pdata,
+                    extensions: ["glyph", "table", "gridnav"],
+                    glyph: glyph_opts,
+                    icon: glyph_opts.map.User,
+                    table: {
+                        indentation: 20,
+                        nodeColumnIdx: 1,
+                        checkboxColumnIdx: 0
+                    },
+                    gridnav: {
+                        autofocusInput: false,
+                        handleCursorKeys: true
+                    },
+                    selectMode: 2,
+                    checkbox: true,
+                    strings: ft_strings,
+                    renderColumns: function (e, d) {
+                        var node = d.node,
+                            $tdList = $(node.tr).find(">td");
+                        $tdList.eq(2).text(node.data.locktime)
+                    }
+                });
+                $("#locked_list > tbody > tr > td:nth-child(3)").css("text-align","center");
+                $("#myModal .btn-primary").click(function () {
+                    s = $.map($("#locked_list").fancytree("getTree").getSelectedNodes(), function (node) {
+                        return node.key;
+                    });
+                    $.get(
+                        ".",
+                        {
+                            act: "unlock",
+                            ul: s
+                        },
+                        function (data) {
+                            if (data!="ok") {
+                                $("#myModalBody").prepend("<div class='alert alert-dismissible alert-danger'>"+data+"</div>")
+                            } else {
+                                $("#myModal").modal("toggle");
+                                check_locked();
+                            }
+                        }
+                    );
+                });
+                $("#myModal").modal();
+            } else check_locked();
+
+        }
+    )
+}
+
+
+
 $(function() {
+    bell = $("#navbar_bell > a > i");
+    
+    //start checking for locked users
+    setInterval(check_locked, 20000);
+
     //enable bs tooltips
     $('[data-toggle="tooltip"]').tooltip();
 
@@ -151,6 +257,8 @@ $(function() {
         $("#navbar_tree_btn").toggleClass('active');
 
     });
+
+    check_locked();
     
 });
 

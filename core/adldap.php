@@ -165,7 +165,7 @@ class ad extends Provider
 
 
     /**
-     * @param Models\Entry $model
+     * @param string $type
      * @return bool
      */
     private function isFolder($type)
@@ -173,6 +173,76 @@ class ad extends Provider
         //$type = $model->getObjectCategory();
         $folders = array('OrganizationalUnit', 'Builtin-Domain', 'Container');
         return in_array($type, $folders);
+    }
+
+
+    /**
+     * Return array (or count) of locked users
+     *
+     * @param bool $checkCount
+     * @return array|bool
+     */
+    public function getLocked($checkCount = false){
+        //Lets find all users who was locked ever
+        $l_filter = '(lockouttime>=1)';
+        $lockedUsers = $this->search()->users()->rawFilter($l_filter)->select("lockouttime", "samaccountname", "name")->get()->all();
+        if (count($lockedUsers)) {
+            // get durations of time of lock from ad settings
+            $d_filter = '(objectClass=domain)';
+            $duration = $this->search()->rawFilter($d_filter)->select("lockoutduration")->get()->all();
+            $duration = $duration[0]->lockoutduration;
+            $duration = $duration[0]/-10000000;
+            $time = time();
+            $result = array();
+            // and check if the lock time of every user isn't expired
+            foreach ($lockedUsers as $lockedUser) {
+                $locktime = round($lockedUser->getLockoutTime() / (10 * 1000 * 1000)) - 11644473600;
+                if ($locktime+$duration > $time) {
+                    $lockedUser->lockouttime = array(0 => date("H:i:s", $locktime));
+                    $result[] = $lockedUser;
+                }
+            }
+            if ($checkCount) {
+                return count($result);
+            }
+            if (count($result)) {
+                $users = array();
+                foreach ($result as $key => $user) {
+                    $users[$key]['title'] = $user->getName();
+                    $users[$key]['key'] = $user->getAccountName();
+                    $users[$key]["data"]['locktime'] = $user->getLockoutTime();
+                    $users[$key]["selected"] = true;
+                }
+                return $users;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+
+    /**
+     * Unlock user
+     *
+     * @param null|string $user samaccountname
+     * @return string
+     */
+    public function unlockUser($user = null) {
+        if (!is_null($user)) {
+            $user = $this->search()->users()->select('lockouttime')->findBy('samaccountname', $user);
+            if ($user) {
+                $user->setAttribute("lockouttime","0");
+                if ($user->update()) {
+                    return "ok";
+                } else {
+                    return "update failed for ".$user;
+                }
+            } else {
+                return "user ".$user." not found";
+            }
+        }
     }
 
 

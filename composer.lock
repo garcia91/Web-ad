@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "adldap2/adldap2",
-            "version": "v6.0.11",
+            "version": "v6.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Adldap2/Adldap2.git",
-                "reference": "0607bb82e1a62aa4760a5f17accf225deba62cd4"
+                "reference": "fd989c6ec7a5e90e28c495794288f55b511aba19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/0607bb82e1a62aa4760a5f17accf225deba62cd4",
-                "reference": "0607bb82e1a62aa4760a5f17accf225deba62cd4",
+                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/fd989c6ec7a5e90e28c495794288f55b511aba19",
+                "reference": "fd989c6ec7a5e90e28c495794288f55b511aba19",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "ldap",
                 "windows"
             ],
-            "time": "2016-05-10 15:02:20"
+            "time": "2016-05-11 19:57:51"
         },
         {
             "name": "doctrine/inflector",

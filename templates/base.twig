@@ -26,6 +26,16 @@
             loadError: "{{ L.js.loadError }}",
             moreData: "{{ L.js.moreData }}",
             noData: "{{ L.js.noData }}"
+        };
+        notif = {
+            nothing: "{{ L.js.nothing }}",
+            locked: "{{ L.js.locked }}"
+        };
+        mymodal = {
+            locked_title: "{{ L.js.lockedtitle }}",
+            unlock: "{{ L.js.unlock }}",
+            user: "{{ L.js.user }}",
+            locktime: "{{ L.js.locktime|raw }}"
         }
     </script>
     <script type="text/javascript" src="./js/jquery-1.12.1.min.js"></script>
@@ -78,5 +88,23 @@
     {% block pagecontent %}
     {% endblock %}
 </main>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"></button>
+                <h4 class="modal-title" id="myModalLabel">title</h4>
+            </div>
+            <div id="myModalBody" class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ L.general.cancel }}</button>
+                <button type="button" class="btn btn-primary">{{ L.general.save }}</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
