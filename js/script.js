@@ -29,6 +29,7 @@ glyph_opts = {
 };
 selected_node = "";
 notifications = 0;
+ptitle = "";
 
 /**
  *
@@ -51,6 +52,9 @@ function callPage(o) {
 }
 
 
+/**
+ * Check if there are locked users
+ */
 function check_locked() {
     $.get(
         ".",
@@ -59,7 +63,10 @@ function check_locked() {
             if (data >0) {
                 bell.removeClass("fa-bell-slash");
                 bell.addClass("fa-bell");
-                if (document.title.indexOf('(*)')) document.title = "(*) "+ document.title;
+                if (!notifications) {
+                    ptitle = document.title;
+                    document.title = "(*) "+ ptitle;
+                }
                 $("#navbar_bell > ul > li").remove();
                 $('#navbar_bell > ul').append("<li><a id='get_locked' href='#'>"+notif.locked+" <span class='badge'></span></a></li>");
                 $("#navbar_bell .badge").html(data);
@@ -68,6 +75,7 @@ function check_locked() {
             } else if (notifications) {
                 bell.removeClass("fa-bell");
                 bell.addClass("fa-bell-slash");
+                document.title = ptitle;
                 $("#navbar_bell > ul > li").remove();
                 $('#navbar_bell > ul').append("<li class='disabled'><a href='#'>"+notif.nothing+"</a></li>");
                 $("#navbar_bell .badge").html("");
@@ -77,6 +85,10 @@ function check_locked() {
     )
 }
 
+
+/**
+ * request a list of locked users and show it in modal
+ */
 function get_locked() {
     $.get(
         ".",
@@ -123,7 +135,9 @@ function get_locked() {
                     }
                 });
                 $("#locked_list > tbody > tr > td:nth-child(3)").css("text-align","center");
+                //button to unlock selected users
                 $("#myModal .btn-primary").click(function () {
+                    //get array of samaccountnames of selected users
                     s = $.map($("#locked_list").fancytree("getTree").getSelectedNodes(), function (node) {
                         return node.key;
                     });
