@@ -10,9 +10,7 @@ namespace webad;
 
 
 use Adldap\Connections\Configuration;
-use Adldap\Exceptions\AdldapException;
 use Adldap\Exceptions\Auth\BindException;
-use Adldap\Exceptions\ConnectionException;
 
 
 
@@ -33,6 +31,8 @@ class core
     protected static $iniFile = __DIR__ . "/config.ini";
 
     /**
+     * Path to twig templates
+     *
      * @var string
      */
     protected static $twigTemplates = "./templates/";
@@ -51,33 +51,44 @@ class core
      * @var array
      */
     protected static $twigConfig = array(
-        //'cache'=>'./cache/twig'
+        //'cache'=>'./cache/twig' //disable it while dev
         'cache' => false
     );
 
     /**
+     * Object of session class
+     *
      * @var session
      */
     public static $session;
 
     /**
+     * Object of i18n class
+     *
      * @var \i18n
      */
     protected static $i18n;
 
     /**
+     * Path to l10n ini-files
+     *
      * @var string
      */
     protected static $i18nLangPath = "./l10n/lang_{LANGUAGE}.ini";
 
     /**
-     * !important
+     * Path to i18n class cache dir
+     * !important: do not disable i18n cache!
      *
      * @var string
      */
     protected static $i18nCachePath = "./cache/l10n/";
 
-
+    /**
+     * Array of variables for twig templates
+     *
+     * @var array
+     */
     public static $twVars = array();
 
     /**
@@ -87,27 +98,37 @@ class core
 
 
     /**
+     * Object of request class.
+     *
      * @var request
      */
     public static $param;
 
 
     /**
+     * Value of current (active) twig template
+     *
      * @var string
      */
     private static $currTemplate = 'auth.twig';
 
 
     /**
+     * Object of ad class (extends adldap class)
+     *
      * @var ad
      */
     public static $ad;
 
 
     /**
+     * Object of adldap configurationa class
+     *
      * @var Configuration
      */
     public static $adConfig;
+
+
 
     //###########################################################
     /**
@@ -120,6 +141,9 @@ class core
     }
 
 
+    /**
+     * Main initialization function
+     */
     public static function init()
     {
         self::$session = new session();
@@ -135,11 +159,14 @@ class core
         self::checkLogon();
     }
 
+    /**
+     * Check request vars
+     */
     private static function checkParam()
     {
         if ($action = self::$param->act) {
             switch ($action) {
-                case 'auth':
+                case 'auth': //authenticate
                     self::$session->clearAll(true);
                     self::$session->dc = self::$param->dc;
                     self::$session->username = self::$param->login;
@@ -149,30 +176,30 @@ class core
                 case 'exit':
                     self::$session->destroy();
                     break;
-                case 'get_folders':
+                case 'get_folders': //request for list of ad folders for building tree
                     $path = self::$param->get('path') ?: '';
                     echo self::getFolders($path);
                     exit;
                     break;
-                case 'get_objects':
+                case 'get_objects': //request for list of ad objects in current folder
                     $path = self::$param->get('path') ?: '';
                     echo self::getObjects($path);
                     exit;
                     break;
-                case 'change_page':
+                case 'change_page': //change active page (auth, ad, config, etc)
                     $page = self::$param->get('page');
                     self::setPage($page);
                     exit;
                     break;
-                case "check_locked":
+                case "check_locked": //check for existing locked users (return a number)
                     echo self::$ad->getLocked(true);
                     exit;
                     break;
-                case "get_locked":
+                case "get_locked": //request for list of locked users in AD
                     echo json_encode(self::$ad->getLocked());
                     exit;
                     break;
-                case "unlock":
+                case "unlock": //request for unlock users (array)
                     $lUsers = self::$param->get("ul");
                     foreach ($lUsers as $lUser) {
                         $result = self::$ad->unlockUser($lUser);
@@ -314,6 +341,7 @@ class core
 
     /**
      * Configure settings for connection to DC
+     *
      * @return bool
      * @throws \Adldap\Exceptions\ConfigurationException
      */
@@ -350,6 +378,7 @@ class core
             }
             if (self::$ad) {
                 self::$session->user_logon = true;
+                // get fullname of authenticated user
                 $user = self::$ad->search()->users()->
                     find(self::$session->username, ['cn','displayName'])->getCommonName();
                 self::addVar('user', $user);
@@ -376,8 +405,14 @@ class core
         $result = json_encode($result);
         return $result;
     }
-    
-    
+
+
+    /**
+     * Return list of objects in current ad folder
+     *
+     * @param string $path
+     * @return array|string
+     */
     private static function getObjects($path = "")
     {
         if ($objects = self::$ad->getObjects($path)) {
