@@ -1,0 +1,22 @@
+{% extends "base.twig" %}
+
+{# page title #}
+{% block pagetitle %}
+    {{ L.pagetitle.search }}
+{% endblock %}
+
+{# content of navigation bar #}
+{% block navbar %}
+    {% set active_page = {search:"active"} %}
+    {% include "navbar.twig" %}
+{% endblock %}
+
+
+
+{# body content #}
+{% block pagecontent %}
+
+
+
+
+{% endblock %}
