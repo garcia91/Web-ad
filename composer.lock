@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "adldap2/adldap2",
-            "version": "v6.0.12",
+            "version": "v6.0.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Adldap2/Adldap2.git",
-                "reference": "fd989c6ec7a5e90e28c495794288f55b511aba19"
+                "reference": "900fcc128547ee74860d2dca0259a5b19143fdbf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/fd989c6ec7a5e90e28c495794288f55b511aba19",
-                "reference": "fd989c6ec7a5e90e28c495794288f55b511aba19",
+                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/900fcc128547ee74860d2dca0259a5b19143fdbf",
+                "reference": "900fcc128547ee74860d2dca0259a5b19143fdbf",
                 "shasum": ""
             },
             "require": {
@@ -47,7 +47,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "A PHP LDAP Library for Active Directory Manipulation.",
+            "description": "A PHP LDAP Package for Active Directory Manipulation.",
             "keywords": [
                 "active directory",
                 "ad",
@@ -57,7 +57,7 @@
                 "ldap",
                 "windows"
             ],
-            "time": "2016-05-11 19:57:51"
+            "time": "2016-05-17 16:04:17"
         },
         {
             "name": "doctrine/inflector",

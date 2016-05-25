@@ -211,6 +211,10 @@ class core
                     echo "ok";
                     exit;
                     break;
+                case "change_dcs":
+                    echo self::change_dcs();
+                    exit;
+                    break;
             }
 
         }
@@ -237,6 +241,7 @@ class core
             if (count($dcs) == 1) {
                 $dn = substr($dcs[0], strpos($dcs[0], '.') + 1);
                 self::addVar('dn', '@' . $dn);
+                self::addVar('dc', $dcs[0]);
             } elseif (count($dcs) > 1) {
                 self::addVar('dc', $dcs);
             }
@@ -267,6 +272,13 @@ class core
     private function initConfiguration($file)
     {
         self::$config = new iniConfig($file);
+        if (self::$session->get("page") == "settings") {
+            $dcs = self::$config['dc'];
+            self::addVar('dc', $dcs);
+            foreach ($dcs as $index => $dc) {
+                
+            }
+        }
     }
 
     private function initTwig($twTmplPath, $twConfig)
@@ -427,4 +439,20 @@ class core
             return $result;
         } else return '[]';
     }
+
+    private function change_dcs() {
+        self::initConfiguration(self::$iniFile);
+        $dcs = self::$param->get("dc");
+        if (is_array($dcs)) {
+            self::$config->del("dc");
+            foreach ($dcs as $index => $dc) {
+                self::$config["dc.".$index] = $dc;
+            }
+            self::$config->save();
+        }
+    }
+
+
 }
+
+

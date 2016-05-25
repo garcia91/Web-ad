@@ -162,6 +162,7 @@ function get_locked() {
 
         }
     )
+    return false;
 }
 
 

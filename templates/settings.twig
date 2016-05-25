@@ -18,9 +18,36 @@
     <div class="container-fluid">
         <div id="settings-row" class="row">
             <div class="col-xs-12 col-md-6">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Контроллеры домена</div>
-                    <div class="panel-body">dcs</div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">{{ L.settings.dcsList }}</div>
+                    <div class="panel-body">
+                        <br>
+                        <form method="post" id="dcsListForm" action=".">
+                            <input type="hidden" name="act" value="change_dcs">
+                            {% if data.dc %}
+                                {% for dc in data.dc %}
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" name="dc[]" title="dc" value="{{ dc }}">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-danger deldc"><span class="fa fa-fw fa-trash"></span></button>
+                                            </span>
+                                        </div>
+                                {% endfor %}
+                            {% endif %}
+                            </form>
+                            <div class="form-group">
+                                <br>
+                                <label for="AddNewDc">{{ L.settings.AddNewDc }}</label>
+                                <div class="input-group">
+                                    <input id="AddNewDc" type="text" class="form-control" placeholder="FQDN of DC" value="">
+                                    <span class="input-group-btn">
+                                        <button id="AddNewDc_btn" type="button" class="btn btn-success"><span class="fa fa-fw fa-plus"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <button type="submit" id="dcsListForm_sbmt" class="disabled btn btn-default">{{ L.general.save }}</button>
+
+                    </div>
                 </div>
             </div>
             <div class="col-xs-12 col-md-6">
@@ -55,4 +82,74 @@
             </div>
         </div>
     </div>
+
+    <script>
+        //update list of "del dc" buttons for jquery click event
+        function update_del_btns() {
+            $(".deldc").click(function () {
+                activate_sbmt(this);
+                $(this).parent().parent().remove();
+            });
+        }
+
+
+        $("#AddNewDc_btn").click(function () {
+            var dc = $("#AddNewDc").val();
+            $("#AddNewDc").val("");
+            var inp = "<div class='input-group'>"+
+                "<input type='text' class='form-control' name='dc[]' title='dc' value='"+dc+"'>"+
+                    "<span class='input-group-btn'>"+
+                    "<button type='button' class='btn btn-danger deldc'><span class='fa fa-fw fa-trash'></span></button>"+
+                    "</span>"+
+                    "</div>";
+            $("#dcsListForm").append(inp);
+            update_del_btns();
+            activate_sbmt($("#dcsListForm input:last"));
+        });
+
+        $("input").keypress(function() {
+            activate_sbmt(this);
+        });
+
+        /**
+         * Activate disabled save (submit) button of form
+         *
+         * @param o Object of form element
+         */
+        function activate_sbmt(o) {
+            form = $(o).parents("form");
+            if (form[0]) {
+                fid = form[0].id;
+                sbmt = $("#" + fid + "_sbmt");
+                sbmt.removeClass("btn-default");
+                sbmt.removeClass("disabled");
+                sbmt.addClass("btn-primary");
+            }
+        }
+
+
+        update_del_btns();
+
+        $("button[type=submit]").click(function () {
+            formid = $(this).attr("id");
+            formi = formid.split("_")[0];
+            msg = $("#"+formi).serialize();
+            $.ajax({
+                type: 'POST',
+                url: '',
+                data: msg,
+                success: function (data) {
+                    alert("ok "+data);
+                },
+                error: function (xhr, str) {
+                    alert("not ok: "+ xhr.responseCode);
+                }
+            })
+        })
+
+
+
+    </script>
+
+
 {% endblock %}

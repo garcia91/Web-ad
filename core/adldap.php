@@ -218,7 +218,7 @@ class ad extends Provider
                 return false;
             }
         } else {
-            return false;
+            return "0";
         }
     }
 

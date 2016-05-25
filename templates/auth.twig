@@ -22,7 +22,7 @@
         <div class="row">
             <div class="col-xs-12  col-sm-12 col-lg-6 col-lg-offset-3">
                 <form method="post" action=".">
-                    {% if data.dc|length > 1 %}
+                    {% if data.dc.0|length > 1 %}
                         <div class="form-group">
                             <div class="input-group">
                                 <span data-toggle="tooltip" data-placement="left" title="{{ L.authform.ttdc }}"
@@ -34,6 +34,8 @@
                                 </select>
                             </div>
                         </div>
+                    {% else %}
+                        <input type="hidden" name="dc" value="{{ data.dc }}">
                     {% endif %}
                     <div class="form-group">
                         <div class="input-group">
