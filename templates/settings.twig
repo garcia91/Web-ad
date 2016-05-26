@@ -56,32 +56,7 @@
                     <div class="panel-body">dcs</div>
                 </div>
             </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="panel panel-info">
-                    <div class="panel-heading">sd</div>
-                    <div class="panel-body">dcs</div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="panel panel-warning">
-                    <div class="panel-heading">sd</div>
-                    <div class="panel-body">dcs</div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="panel panel-success">
-                    <div class="panel-heading">sd</div>
-                    <div class="panel-body">dcs</div>
-                </div>
-            </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">sd</div>
-                    <div class="panel-body">dcs</div>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <script>
         //update list of "del dc" buttons for jquery click event
@@ -107,12 +82,14 @@
             activate_sbmt($("#dcsListForm input:last"));
         });
 
+
         $("input").keypress(function() {
+            $(this)
             activate_sbmt(this);
         });
 
         /**
-         * Activate disabled save (submit) button of form
+         * Activate/deactivate save (submit) button of form
          *
          * @param o Object of form element
          */
@@ -121,35 +98,40 @@
             if (form[0]) {
                 fid = form[0].id;
                 sbmt = $("#" + fid + "_sbmt");
-                sbmt.removeClass("btn-default");
-                sbmt.removeClass("disabled");
-                sbmt.addClass("btn-primary");
+                sbmt.toggleClass("disabled btn-default btn-primary")
             }
         }
 
 
-        update_del_btns();
-
         $("button[type=submit]").click(function () {
-            formid = $(this).attr("id");
-            formi = formid.split("_")[0];
-            msg = $("#"+formi).serialize();
+            btn = $(this);
+            formid = btn.attr("id").split("_")[0];
+            msg = $("#"+formid).serialize();
             $.ajax({
                 type: 'POST',
                 url: '',
                 data: msg,
                 success: function (data) {
-                    alert("ok "+data);
+                    if (data=="ok") {
+                        btn.removeClass("btn-primary");
+                        btn.addClass("btn-success");
+                        setTimeout(function () {
+                            btn.toggleClass("btn-success btn-default disabled")
+                        }, 1000);
+                    } else {
+                        btn.toggleClass("btn-primary btn-danger");
+                        alert("{{ L.general.error }}\n"+data);
+                    }
                 },
                 error: function (xhr, str) {
-                    alert("not ok: "+ xhr.responseCode);
+                    btn.toggleClass("btn-primary btn-danger");
+                    alert("{{ L.general.error }}\n"+ xhr.responseCode);
                 }
             })
-        })
+        });
 
-
+        update_del_btns();
 
     </script>
-
 
 {% endblock %}

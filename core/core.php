@@ -155,7 +155,6 @@ class core
         self::initI18n(self::$i18nLangPath, self::$i18nCachePath);
         self::initTwig(self::$twigTemplates, self::$twigConfig);
 
-
         self::checkLogon();
     }
 
@@ -229,6 +228,13 @@ class core
     private static function checkLogon()
     {
         if (self::$session->user_logon) {
+            if (self::$ad) {
+                self::$session->user_logon = true;
+                // get fullname of authenticated user
+                $user = self::$ad->search()->users()->
+                findBy("samaccountname", self::$session->username, ['cn','displayName'])->getCommonName();
+                self::addVar('user', $user);
+            }
             if (self::$session->get("page")) {
                 self::setPage(self::$session->get("page"));
             } else {
@@ -388,13 +394,6 @@ class core
                 self::addVar('error', array("code" => $c, "message" => $m));
                 self::$session->user_logon = false;
             }
-            if (self::$ad) {
-                self::$session->user_logon = true;
-                // get fullname of authenticated user
-                $user = self::$ad->search()->users()->
-                    find(self::$session->username, ['cn','displayName'])->getCommonName();
-                self::addVar('user', $user);
-            }
         }
     }
 
@@ -440,6 +439,12 @@ class core
         } else return '[]';
     }
 
+
+    /**
+     * Saving list of domain controllers from setting page
+     *
+     * @return string
+     */
     private function change_dcs() {
         self::initConfiguration(self::$iniFile);
         $dcs = self::$param->get("dc");
@@ -448,7 +453,14 @@ class core
             foreach ($dcs as $index => $dc) {
                 self::$config["dc.".$index] = $dc;
             }
-            self::$config->save();
+            $result = self::$config->save();
+            if ($result===false) {
+                return "Error of saving config file";
+            } else {
+                return "ok";
+            }
+        } else {
+            return "Bad data from client";
         }
     }
 

@@ -184,15 +184,14 @@ class ad extends Provider
      */
     public function getLocked($checkCount = false){
         //Lets find all users who was locked ever
-        $l_filter = '(lockouttime>=1)';
-        $lockedUsers = $this->search()->users()->rawFilter($l_filter)->select("lockouttime", "samaccountname", "name")->get()->all();
+        $lockedUsers = $this->search()->users()->rawFilter("(lockouttime>=1)")->select("lockouttime", "samaccountname", "name")->get()->all();
         if (count($lockedUsers)) {
             // get durations of time of lock from ad settings
             $d_filter = '(objectClass=domain)';
             $duration = $this->search()->rawFilter($d_filter)->select("lockoutduration")->get()->all();
             $duration = $duration[0]->lockoutduration;
             $duration = $duration[0]/-10000000;
-            $time = time();
+            $time = time(); //time on web-server and dc must be synchronized
             $result = array();
             // and check if the lock time of every user isn't expired
             foreach ($lockedUsers as $lockedUser) {

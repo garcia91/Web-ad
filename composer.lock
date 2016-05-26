@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "adldap2/adldap2",
-            "version": "v6.0.15",
+            "version": "v6.0.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Adldap2/Adldap2.git",
-                "reference": "900fcc128547ee74860d2dca0259a5b19143fdbf"
+                "reference": "90b2e76fd4d04a23295e9ec3ec3c9579775901cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/900fcc128547ee74860d2dca0259a5b19143fdbf",
-                "reference": "900fcc128547ee74860d2dca0259a5b19143fdbf",
+                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/90b2e76fd4d04a23295e9ec3ec3c9579775901cf",
+                "reference": "90b2e76fd4d04a23295e9ec3ec3c9579775901cf",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "ldap",
                 "windows"
             ],
-            "time": "2016-05-17 16:04:17"
+            "time": "2016-05-24 14:07:49"
         },
         {
             "name": "doctrine/inflector",
@@ -128,7 +128,7 @@
         },
         {
             "name": "illuminate/contracts",
-            "version": "v5.2.31",
+            "version": "v5.2.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/contracts.git",
@@ -170,16 +170,16 @@
         },
         {
             "name": "illuminate/support",
-            "version": "v5.2.31",
+            "version": "v5.2.32",
             "source": {
                 "type": "git",
                 "url": "https://github.com/illuminate/support.git",
-                "reference": "cb5b004610baabe6b4bf532e6e4ff9eaca5eb25b"
+                "reference": "61329ea409362fdae167fdca1125f46c997ce689"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/illuminate/support/zipball/cb5b004610baabe6b4bf532e6e4ff9eaca5eb25b",
-                "reference": "cb5b004610baabe6b4bf532e6e4ff9eaca5eb25b",
+                "url": "https://api.github.com/repos/illuminate/support/zipball/61329ea409362fdae167fdca1125f46c997ce689",
+                "reference": "61329ea409362fdae167fdca1125f46c997ce689",
                 "shasum": ""
             },
             "require": {
@@ -222,7 +222,7 @@
             ],
             "description": "The Illuminate Support package.",
             "homepage": "http://laravel.com",
-            "time": "2016-04-21 13:28:36"
+            "time": "2016-05-14 16:24:10"
         },
         {
             "name": "paragonie/random_compat",

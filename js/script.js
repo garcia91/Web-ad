@@ -103,11 +103,7 @@ function get_locked() {
                     "</tr></thead>" +
                     "<tbody></tbody></div>";
                 $("#myModalBody").html(templatediv);
-                $("#locked_list").addClass("table")
-                    .addClass("table-condensed")
-                    .addClass("table-striped")
-                    .addClass("table-hover")
-                    .addClass("table-responsive");
+                $("#locked_list").addClass("table table-condensed table-striped table-hover table-responsive");
                 pdata = JSON.parse(data);
                 $("#locked_list").fancytree({
                     idPrefix: "ftlu_",

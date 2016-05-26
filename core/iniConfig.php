@@ -158,6 +158,6 @@ class iniConfig implements \ArrayAccess, \Countable
                 }
             }
         }
-        file_put_contents($this->file, $str);
+        return file_put_contents($this->file, $str);
     }
 }
