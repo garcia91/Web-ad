@@ -227,14 +227,16 @@ class core
      */
     private static function checkLogon()
     {
+        if (self::$ad) {
+            self::$session->user_logon = true;
+        }
         if (self::$session->user_logon) {
-            if (self::$ad) {
-                self::$session->user_logon = true;
                 // get fullname of authenticated user
                 $user = self::$ad->search()->users()->
                 findBy("samaccountname", self::$session->username, ['cn','displayName'])->getCommonName();
                 self::addVar('user', $user);
-            }
+                self::$session->logintime = self::$session->logintime ?: date("d.n.Y H:i:s");
+                self::addVar('logintime', self::$session->logintime);
             if (self::$session->get("page")) {
                 self::setPage(self::$session->get("page"));
             } else {
