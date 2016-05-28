@@ -235,7 +235,7 @@ class core
                 $user = self::$ad->search()->users()->
                 findBy("samaccountname", self::$session->username, ['cn','displayName'])->getCommonName();
                 self::addVar('user', $user);
-                self::$session->logintime = self::$session->logintime ?: date("d.n.Y H:i:s");
+                self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
                 self::addVar('logintime', self::$session->logintime);
             if (self::$session->get("page")) {
                 self::setPage(self::$session->get("page"));

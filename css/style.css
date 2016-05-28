@@ -39,6 +39,8 @@ main div {
 }
 
 
+
+
 #tree ul {
     min-height: inherit;
 }
@@ -67,4 +69,69 @@ ul.fancytree-container {
     ul.fancytree-container {
         font-size: 14px !important;
     }
+}
+
+
+
+#tree {
+    overflow: auto;
+    max-height: 200px;
+    padding: 0;
+}
+
+.objects-div {
+    max-height: 200px;
+    padding: 0;
+}
+
+/*
+#objects {
+    width: 100%;
+}
+
+#objects thead, #objects tbody, #objects tr, #objects td, #objects th {display: block}
+
+#objects tr:after {
+    content: ' ';
+    display: block;
+    visibility: hidden;
+    clear: both;
+}
+
+#objects tbody {
+    overflow-y: auto;
+}
+
+#objects tbody td, #objects thead th {
+    float: left;
+}
+
+#objects tbody td:first-child, #objects thead th:first-child {
+    width: 26px;
+}
+
+#objects tbody td:nth-child(2), #objects thead th:nth-child(2) {
+    width: 300px;
+}
+
+#objects tbody td:nth-child(3), #objects thead th:nth-child(3) {
+    width: 300px;
+}
+
+*/
+
+.table-fixed thead {
+    width: 97%;
+}
+.table-fixed tbody {
+    height: 230px;
+    overflow-y: auto;
+    width: 100%;
+}
+.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
+    display: block;
+}
+.table-fixed tbody td, .table-fixed thead > tr> th {
+    float: left;
+    border-bottom-width: 0;
 }

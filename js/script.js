@@ -255,7 +255,7 @@ $(function() {
         renderColumns:function(e,data){
             var node = data.node,
                 $tdList = $(node.tr).find(">td");
-            $tdList.eq(2).text(node.data.dtype)
+            $tdList.eq(2).text(adtypes[node.data.type])
         },
         checkbox:true,
         selectMode: 2,

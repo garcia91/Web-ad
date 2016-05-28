@@ -36,6 +36,15 @@
             unlock: "{{ L.js.unlock }}",
             user: "{{ L.js.user }}",
             locktime: "{{ L.js.locktime|raw }}"
+        };
+        adtypes = {
+            Group: "{{ L.adtypes.Group }}",
+            User: "{{ L.adtypes.User }}",
+            Contact: "{{ L.adtypes.Contact }}",
+            Computer: "{{ L.adtypes.Computer }}",
+            OrganizationalUnit: "{{ L.adtypes.OrganizationalUnit }}",
+            Entry: "{{ L.adtypes.Entry }}",
+            Container: "{{ L.adtypes.Container }}"
         }
     </script>
     <script type="text/javascript" src="./js/jquery-1.12.1.min.js"></script>

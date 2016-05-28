@@ -25,9 +25,9 @@
                 <span class="fa fa-fw fa-user"></span> {{ data.user }}
             </a>
             <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-header">{{ L.navbar.logintime }}<br>{{ data.logintime }}</li>
+                <li class="dropdown-header">{{ L.navbar.logintime }} {{ data.logintime }}</li>
                 <li role="separator" class="divider"></li>
-                <li data-toggle="tooltip" data-placement="bottom" title="{{ L.navbar.ttexit }}" >
+                <li>
                     <a href="?act=exit"><span class="fa fa-fw fa-sign-out"></span> {{ L.navbar.logout }}</a>
                 </li>
             </ul>
