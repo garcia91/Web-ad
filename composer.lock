@@ -9,21 +9,21 @@
     "packages": [
         {
             "name": "adldap2/adldap2",
-            "version": "v6.0.16",
+            "version": "v6.0.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Adldap2/Adldap2.git",
-                "reference": "90b2e76fd4d04a23295e9ec3ec3c9579775901cf"
+                "reference": "b967eddfc067c7f445f8443f516e117ae7c14a62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/90b2e76fd4d04a23295e9ec3ec3c9579775901cf",
-                "reference": "90b2e76fd4d04a23295e9ec3ec3c9579775901cf",
+                "url": "https://api.github.com/repos/Adldap2/Adldap2/zipball/b967eddfc067c7f445f8443f516e117ae7c14a62",
+                "reference": "b967eddfc067c7f445f8443f516e117ae7c14a62",
                 "shasum": ""
             },
             "require": {
                 "ext-ldap": "*",
-                "illuminate/support": "~5.2",
+                "illuminate/support": "~5.0",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -57,7 +57,7 @@
                 "ldap",
                 "windows"
             ],
-            "time": "2016-05-24 14:07:49"
+            "time": "2016-06-02 16:52:14"
         },
         {
             "name": "doctrine/inflector",
@@ -308,16 +308,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.24.0",
+            "version": "v1.24.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "3e5aa30ebfbafd5951fb1b01e338e1800ce7e0e8"
+                "reference": "3566d311a92aae4deec6e48682dc5a4528c4a512"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3e5aa30ebfbafd5951fb1b01e338e1800ce7e0e8",
-                "reference": "3e5aa30ebfbafd5951fb1b01e338e1800ce7e0e8",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3566d311a92aae4deec6e48682dc5a4528c4a512",
+                "reference": "3566d311a92aae4deec6e48682dc5a4528c4a512",
                 "shasum": ""
             },
             "require": {
@@ -365,7 +365,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-01-25 21:22:18"
+            "time": "2016-05-30 09:11:59"
         }
     ],
     "packages-dev": [],

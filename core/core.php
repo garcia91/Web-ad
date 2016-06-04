@@ -214,6 +214,10 @@ class core
                     echo self::change_dcs();
                     exit;
                     break;
+                case "change_settings":
+                    echo self::change_settings();
+                    exit;
+                    break;
             }
 
         }
@@ -280,12 +284,23 @@ class core
     private function initConfiguration($file)
     {
         self::$config = new iniConfig($file);
+        self::$session->set("lang", self::$config["general"]["lang"]);
+        self::addVar("notifInterval",self::$config["general"]["notifInterval"]);
         if (self::$session->get("page") == "settings") {
             $dcs = self::$config['dc'];
             self::addVar('dc', $dcs);
-            foreach ($dcs as $index => $dc) {
-                
+            // get array of existing langs from list of files of lang path
+            $langPath = self::$i18nLangPath;
+            $path = substr($langPath, 0, strrpos($langPath,"/"));
+            $files = scandir($path);
+            $langs = array();
+            foreach ($files as $file) {
+                $file = explode(".", $file);
+                if (stripos($file[1], "ini") !== false) {
+                    $langs[] = explode("_", $file[0])[1];
+                }
             }
+            self::addVar("langs", $langs);
         }
     }
 
@@ -307,6 +322,7 @@ class core
     {
         self::$i18n = new \i18n($langPath, $langCache);
         self::$i18n->init();
+        //get all constans from i18n-class cache...
         $l = new \ReflectionClass('L');
         $arrL = $l->getConstants();
         $arr2 = array();
@@ -315,6 +331,7 @@ class core
             self::addVar($k,$item,'L');
             $arr2[$k[0]][$k[1]] = $item;
         }
+        //...and add them to twig vars
         self::$twVars["L"] = $arr2;
         self::addVar('lang',self::$i18n->getAppliedLang());
     }
@@ -329,7 +346,7 @@ class core
     /**
      * Adding your own var to the $twVars array for twig
      *
-     * @param string|array $var Name of variable
+     * @param string $var Name of variable
      * @param mixed $value Value of variable
      * @param string $node
      * @return bool
@@ -463,6 +480,24 @@ class core
             }
         } else {
             return "Bad data from client";
+        }
+    }
+
+    private function change_settings() {
+        self::initConfiguration(self::$iniFile);
+        $lang = self::$param->get("language");
+        $interval = self::$param->get("notifInterval");
+        if ($lang) {
+            self::$config["general.lang"] = $lang;
+        }
+        if ($interval) {
+            self::$config["general.notifInterval"] = $interval;
+        }
+        $result = self::$config->save();
+        if ($result===false) {
+            return "Error of saving config file";
+        } else {
+            return "ok";
         }
     }
 
