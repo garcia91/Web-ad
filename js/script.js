@@ -167,7 +167,7 @@ $(function() {
     bell = $("#navbar_bell > a > i");
     
     //start checking for locked users
-    setInterval(check_locked, notifInterval*1000);
+   // setInterval(check_locked, notifInterval*1000);
 
     //enable bs tooltips
     $('[data-toggle="tooltip"]').tooltip();
@@ -269,7 +269,7 @@ $(function() {
 
     });
 
-    check_locked();
+  //  check_locked();
     
 });
 

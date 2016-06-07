@@ -9,9 +9,8 @@
 namespace webad;
 
 
-use Adldap\Connections\Configuration;
-use Adldap\Exceptions\Auth\BindException;
-
+use LdapTools\Exception\LdapConnectionException;
+use LdapTools\Exception\LdapBindException;
 
 
 class core
@@ -116,18 +115,9 @@ class core
     /**
      * Object of ad class (extends adldap class)
      *
-     * @var ad
+     * @var adldap
      */
-    public static $ad;
-
-
-    /**
-     * Object of adldap configurationa class
-     *
-     * @var Configuration
-     */
-    public static $adConfig;
-
+    private static $ad;
 
 
     //###########################################################
@@ -176,12 +166,12 @@ class core
                     self::$session->destroy();
                     break;
                 case 'get_folders': //request for list of ad folders for building tree
-                    $path = self::$param->get('path') ?: '';
+                    $path = self::$param->get('path') ?: null;
                     echo self::getFolders($path);
                     exit;
                     break;
                 case 'get_objects': //request for list of ad objects in current folder
-                    $path = self::$param->get('path') ?: '';
+                    $path = self::$param->get('path') ?: null;
                     echo self::getObjects($path);
                     exit;
                     break;
@@ -236,9 +226,9 @@ class core
         }
         if (self::$session->user_logon) {
                 // get fullname of authenticated user
-                $user = self::$ad->search()->users()->
+/*                $user = self::$ad->search()->users()->
                 findBy("samaccountname", self::$session->username, ['cn','displayName'])->getCommonName();
-                self::addVar('user', $user);
+                self::addVar('user', $user);*/
                 self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
                 self::addVar('logintime', self::$session->logintime);
             if (self::$session->get("page")) {
@@ -377,38 +367,25 @@ class core
 
 
     /**
-     * Configure settings for connection to DC
-     *
-     * @return bool
-     * @throws \Adldap\Exceptions\ConfigurationException
-     */
-    private static function prepareAd()
-    {
-        if (self::$session->dc && self::$session->username && self::$session->userpass) {
-            self::$adConfig = new Configuration();
-            self::$adConfig->setDomainControllers(array(self::$session->dc));
-            self::$adConfig->setAdminUsername(self::$session->username);
-            self::$adConfig->setAdminPassword(self::$session->userpass);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * try to connect to DC, using credentials form $adConfig
+     * try to connect to DC, using credentials form
      */
     private static function connectAd()
     {
-        if (self::prepareAd()) {
+        if (self::$session->dc && self::$session->username && self::$session->userpass) {
             try {
-                self::$ad = new ad(self::$adConfig);
-            } catch (BindException $e) {
+                self::$ad = new adldap(self::$session->username, self::$session->userpass, self::$session->dc);
+            } catch (LdapConnectionException $e) {
+                self::$session->del('dc');
+                self::$session->del('username');
+                self::$session->del('userpass');
+                $m = $e->getMessage();
+                self::addVar('error', array("code" => 99, "message" => $m));
+                self::$session->user_logon = false;
+            } catch (LdapBindException $e) {
                 self::$session->del('dc');
                 self::$session->del('username');
                 self::$session->del('userpass');
                 $c = $e->getCode();
-                if ($c == -1) $c=99;
                 $m = $e->getMessage();
                 self::addVar('error', array("code" => $c, "message" => $m));
                 self::$session->user_logon = false;
@@ -422,7 +399,7 @@ class core
      * @param string $path
      * @return array
      */
-    private static function getFolders($path = "")
+    private static function getFolders($path = null)
     {
         $folders = self::$ad->getFolders($path);
         $result = array();
@@ -443,7 +420,7 @@ class core
      * @param string $path
      * @return array|string
      */
-    private static function getObjects($path = "")
+    private static function getObjects($path = null)
     {
         if ($objects = self::$ad->getObjects($path)) {
             $result = array();

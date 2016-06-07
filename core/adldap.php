@@ -8,49 +8,69 @@
 
 namespace webad;
 
-use Adldap\Connections\Provider;
-use Adldap\Connections\Configuration;
-use Adldap\Models;
-use Adldap\Contracts\Connections\ConnectionInterface;
-use Adldap\Contracts\Schemas\SchemaInterface;
-use Adldap\Adldap;
+use LdapTools\Configuration;
+use LdapTools\DomainConfiguration;
+use LdapTools\LdapManager;
+use LdapTools\Object\LdapObjectType;
 
 
-class ad extends Provider
+class adldap
 {
 
+
     /**
-     * Adldap instance
-     *
-     * @var Adldap
+     * @var Configuration
      */
-    private $adInstance;
+    public $config;
+
+    /**
+     * @var DomainConfiguration
+     */
+    public $domain;
+
+
+    /**
+     * @var string
+     */
+    private $domainName;
+
+
+    /**
+     * @var LdapManager
+     */
+    public $ad;
+
+
+    /**
+     * @var \LdapTools\Query\LdapQueryBuilder
+     */
+    public $search;
 
 
 
     /**
      * ad constructor.
      *
-     * @param Configuration|array $configuration
-     * @param ConnectionInterface|null $connection
-     * @param SchemaInterface|null $schema
+     * @param string $username
+     * @param string $userpass
+     * @param string $dc
      */
-    public function __construct($configuration = [], ConnectionInterface $connection = null, SchemaInterface $schema = null)
+    public function __construct($username, $userpass, $dc)
     {
-        $suffix = $this->getAccountSuffix($configuration);
-        $baseDN = $this->getBaseDN($configuration);
-        if ($suffix) {
-            $configuration->setAccountSuffix($suffix);
-        }
-        if ($baseDN) {
-            $configuration->setBaseDn($baseDN);
-        }
-        parent::__construct($configuration);
-        $this->adInstance = new Adldap();
-        $this->adInstance->addProvider('default', $this);
-        $this->adInstance->connect('default');
-    }
+        $this->setDomainName($dc);
+        $baseDN = $this->getBaseDN();
 
+        $this->domain = (new DomainConfiguration($this->domainName))
+            ->setBaseDn($baseDN)
+            ->setUsername($username)
+            ->setPassword($userpass)
+            ->setServers([$dc]);
+        $this->config = new Configuration($this->domain);
+        $this->ad = new LdapManager($this->config);
+        $this->search = $this->ad->buildLdapQuery();
+
+
+    }
 
 
     /**
@@ -69,31 +89,39 @@ class ad extends Provider
     }
 
     /**
-     * @param $config Configuration
-     * @return string|bool
+     * @param $dc string
+     * @return string
      */
-    private function getBaseDN($config)
+    private function getBaseDN($dc = null)
     {
-        $dn = $this->getDomain($config->getDomainControllers()[0]);
-        if ($dn) {
-            return "DC=" . implode(",DC=", explode(".", $dn));
+        if (is_null($dc)) {
+            $dn = $this->getDomainName();
         } else {
-            return false;
+            $dn = substr(strstr($dc, "."), 1);
         }
+        return "DC=" . implode(",DC=", explode(".", $dn));
     }
 
     /**
      * @param $dc string
      * @return bool|string
      */
-    private function getDomain($dc)
+    private function getDomainName()
     {
+        return $this->domainName;
+    }
+
+    /**
+     * @param $dc string
+     * @return bool|string
+     */
+    private function setDomainName($dc) {
         if ($dc) {
-            return substr(strstr($dc, "."), 1);
-        } else {
-            return false;
+            $this->domainName = substr(strstr($dc, "."), 1);
         }
     }
+
+
 
 
     /**
@@ -103,40 +131,33 @@ class ad extends Provider
      * @param bool $checkChild Set if its need to check child folders
      * @return array|bool
      */
-    public function getFolders($path = '', $checkChild = false)
+    public function getFolders($path = null, $checkChild = false)
     {
-        // set baseDN path
-        if ($path) {
-            core::$adConfig->setBaseDn($path);
-        }
-
         // returning if there are childs in this baseDN
         if ($checkChild) {
-            $filter = "(|(objectcategory=container)(objectcategory=organizationalunit))";
-            $child = $this->search()->recursive(false)->rawFilter($filter)->select('')->first();
+            $child = $this->search
+                ->setBaseDn($path)
+                ->from(LdapObjectType::OU)
+                ->from(LdapObjectType::CONTAINER)
+                ->setScopeOneLevel()
+                ->getLdapQuery()->getArrayResult();
             return $child ? true : false;
         } else {
-            $filter = "(|(objectcategory=container)(objectcategory=organizationalunit)(objectcategory=builtinDomain))";
-            // searching folders in AD (OrganizationalUnit or Container or BuiltinDomain)
-            $folders = $this->search()->recursive(false)->rawFilter($filter)->
-            //      orWhere("objectcategory", "=", "container")->
-            //      orWhere("objectcategory", "=", "organizationalunit")->
-            //      orWhere("objectcategory", "=", 'builtinDomain')->
-
-            select("name")->
-            get()->all();
-
+            $folders = $this->search
+                //->select(['name','dn'])
+                ->setBaseDn($path)
+                ->from(LdapObjectType::OU)
+                ->from(LdapObjectType::CONTAINER)
+                ->orderBy('name')
+                ->setScopeOneLevel()
+                ->getLdapQuery()->getArrayResult();
         }
-        $result = array();
+
         foreach ($folders as $key => $folder) {
-            $result[$key]['name'] = $folder->getName();
-            $result[$key]['dn'] = $folder->getDistinguishedName();
-            //$result[$key]['type'] = $folder->getObjectCategory();
-            $result[$key]['hasChilds'] = $this->getFolders($result[$key]['dn'],true);
+            $folders[$key]['hasChilds'] = $this->getFolders($folder['dn'], true);
         }
-        sort($result);
-        reset($result);
-        return $result;
+
+        return $folders;
     }
 
     /**
@@ -144,16 +165,17 @@ class ad extends Provider
      * @return array|bool
      */
     public function getObjects($path) {
-        if ($path) {
-            core::$adConfig->setBaseDn($path);
-        }
-        $objects = $this->search()->recursive(false)->whereHas('name')->
-            select("name")->get()->all();
+
+        $objects = $this->search
+            ->where($this->search->filter()->present('name'))
+            ->select(['name','dn'])
+            ->setBaseDn($path)
+            ->setScopeOneLevel()
+            ->getLdapQuery()->getResult();
+
+        //$objects = $this->search()->recursive(false)->whereHas('name')->select("name")->get()->all();
         if (!$objects) return false;
-        $result = array();
         foreach ($objects as $key => $object) {
-            $result[$key]['name'] = $object->getName();
-            $result[$key]['dn'] = $object->getDistinguishedName();
             //$result[$key]['type'] = $object->getObjectClass()->getName();
             $result[$key]['type'] = (new \ReflectionClass($object))->getShortName();
             $result[$key]['folder'] = $this->isFolder($result[$key]['type']);
