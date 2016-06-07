@@ -38,13 +38,13 @@
             locktime: "{{ L.js.locktime|raw }}"
         };
         adtypes = {
-            Group: "{{ L.adtypes.Group }}",
-            User: "{{ L.adtypes.User }}",
-            Contact: "{{ L.adtypes.Contact }}",
-            Computer: "{{ L.adtypes.Computer }}",
-            OrganizationalUnit: "{{ L.adtypes.OrganizationalUnit }}",
+            group: "{{ L.adtypes.Group }}",
+            user: "{{ L.adtypes.User }}",
+            contact: "{{ L.adtypes.Contact }}",
+            computer: "{{ L.adtypes.Computer }}",
+            ou: "{{ L.adtypes.OrganizationalUnit }}",
             Entry: "{{ L.adtypes.Entry }}",
-            Container: "{{ L.adtypes.Container }}"
+            container: "{{ L.adtypes.Container }}"
         };
         notifInterval = {{ data.notifInterval }};
     </script>

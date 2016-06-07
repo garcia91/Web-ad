@@ -21,10 +21,10 @@ glyph_opts = {
         folderOpen: "fa fa-folder-open fa-fw",
         loading: "fa fa-refresh fa-spin fa-fw",
         // my icons:
-        User: "fa fa-fw fa-user",
-        Computer: "fa fa-fw fa-desktop",
-        Group: "fa fa-fw fa-users",
-        Contact: "fa fa-fw fa-credit-card"
+        user: "fa fa-fw fa-user",
+        computer: "fa fa-fw fa-desktop",
+        group: "fa fa-fw fa-users",
+        contact: "fa fa-fw fa-credit-card"
     }
 };
 selected_node = "";
@@ -111,7 +111,7 @@ function get_locked() {
                     source: pdata,
                     extensions: ["glyph", "table", "gridnav"],
                     glyph: glyph_opts,
-                    icon: glyph_opts.map.User,
+                    icon: glyph_opts.map.user,
                     table: {
                         indentation: 20,
                         nodeColumnIdx: 1,
@@ -167,7 +167,7 @@ $(function() {
     bell = $("#navbar_bell > a > i");
     
     //start checking for locked users
-   // setInterval(check_locked, notifInterval*1000);
+    setInterval(check_locked, notifInterval*1000);
 
     //enable bs tooltips
     $('[data-toggle="tooltip"]').tooltip();
@@ -269,7 +269,7 @@ $(function() {
 
     });
 
-  //  check_locked();
+    check_locked();
     
 });
 

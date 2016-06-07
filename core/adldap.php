@@ -12,6 +12,7 @@ use LdapTools\Configuration;
 use LdapTools\DomainConfiguration;
 use LdapTools\LdapManager;
 use LdapTools\Object\LdapObjectType;
+use LdapTools\Factory\AttributeConverterFactory;
 
 
 class adldap
@@ -47,10 +48,7 @@ class adldap
     public $search;
 
 
-
     /**
-     * ad constructor.
-     *
      * @param string $username
      * @param string $userpass
      * @param string $dc
@@ -68,25 +66,8 @@ class adldap
         $this->config = new Configuration($this->domain);
         $this->ad = new LdapManager($this->config);
         $this->search = $this->ad->buildLdapQuery();
-
-
     }
 
-
-    /**
-     *
-     * @param $config Configuration
-     * @return string|bool
-     */
-    private function getAccountSuffix($config)
-    {
-        $dn = $this->getDomain($config->getDomainControllers()[0]);
-        if ($dn) {
-            return '@' . $dn;
-        } else {
-            return false;
-        }
-    }
 
     /**
      * @param $dc string
@@ -112,7 +93,7 @@ class adldap
     }
 
     /**
-     * @param $dc string
+     * @param $dc string FQDN of domain controller
      * @return bool|string
      */
     private function setDomainName($dc) {
@@ -133,21 +114,21 @@ class adldap
      */
     public function getFolders($path = null, $checkChild = false)
     {
-        // returning if there are childs in this baseDN
         if ($checkChild) {
+            // returning if there are childs in this baseDN
             $child = $this->search
                 ->setBaseDn($path)
-                ->from(LdapObjectType::OU)
-                ->from(LdapObjectType::CONTAINER)
-                ->setScopeOneLevel()
                 ->getLdapQuery()->getArrayResult();
             return $child ? true : false;
         } else {
             $folders = $this->search
-                //->select(['name','dn'])
+                //->select('')
                 ->setBaseDn($path)
-                ->from(LdapObjectType::OU)
-                ->from(LdapObjectType::CONTAINER)
+                ->where($this->search->filter()->bOr(
+                    $this->search->filter()->eq("objectcategory","container"),
+                    $this->search->filter()->eq("objectcategory","organizationalunit"),
+                    $this->search->filter()->eq("objectcategory","builtinDomain")
+                ))
                 ->orderBy('name')
                 ->setScopeOneLevel()
                 ->getLdapQuery()->getArrayResult();
@@ -165,24 +146,45 @@ class adldap
      * @return array|bool
      */
     public function getObjects($path) {
-
         $objects = $this->search
+            ->from(LdapObjectType::COMPUTER)
+            ->from(LdapObjectType::CONTACT, 'contact')
+            ->from(LdapObjectType::CONTAINER)
+            ->from(LdapObjectType::USER)
+            ->from(LdapObjectType::GROUP)
+            ->from(LdapObjectType::OU)
             ->where($this->search->filter()->present('name'))
+            ->where($this->search->filter()->notPresent('contact.samaccountname'))
             ->select(['name','dn'])
             ->setBaseDn($path)
+            ->orderBy('name')
             ->setScopeOneLevel()
-            ->getLdapQuery()->getResult();
+            ->getLdapQuery()->getResult()->toArray();
+        if (!count($objects)) return false;
 
-        //$objects = $this->search()->recursive(false)->whereHas('name')->select("name")->get()->all();
-        if (!$objects) return false;
-        foreach ($objects as $key => $object) {
-            //$result[$key]['type'] = $object->getObjectClass()->getName();
-            $result[$key]['type'] = (new \ReflectionClass($object))->getShortName();
-            $result[$key]['folder'] = $this->isFolder($result[$key]['type']);
+        //make two different arrays for folders and other objects
+        //  it helps us to sort objects with folders at first
+        $result = array();
+        $folders = array();
+        foreach ($objects as $object) {
+            $type = $object->getType();
+            if ($this->isFolder($type)) {
+                $folders[] = [
+                    'type' => $type,
+                    'folder' => true,
+                    'name' => $object->name,
+                    'dn' => $object->dn
+                ];
+            } else {
+                $result[] = [
+                    'type' => $type,
+                    'folder' => false,
+                    'name' => $object->name,
+                    'dn' => $object->dn
+                ];
+            }
         }
-        sort($result);
-        reset($result);
-        return $result;
+        return array_merge($folders,$result);
     }
 
 
@@ -192,8 +194,7 @@ class adldap
      */
     private function isFolder($type)
     {
-        //$type = $model->getObjectCategory();
-        $folders = array('OrganizationalUnit', 'Builtin-Domain', 'Container');
+        $folders = array('ou', 'builtinDomain', 'container');
         return in_array($type, $folders);
     }
 
@@ -205,39 +206,39 @@ class adldap
      * @return array|bool
      */
     public function getLocked($checkCount = false){
-        //Lets find all users who was locked ever
-        $lockedUsers = $this->search()->users()->rawFilter("(lockouttime>=1)")->select("lockouttime", "samaccountname", "name")->get()->all();
+        $lockedUsers = $this->search
+            ->fromUsers()
+            //->select('*')
+            ->select(['samaccountname','name','lockedDate','lockouttime'])
+            ->where(['locked' => true])
+            ->getLdapQuery()->getArrayResult();
         if (count($lockedUsers)) {
-            // get durations of time of lock from ad settings
-            $d_filter = '(objectClass=domain)';
-            $duration = $this->search()->rawFilter($d_filter)->select("lockoutduration")->get()->all();
-            $duration = $duration[0]->lockoutduration;
-            $duration = $duration[0]/-10000000;
-            $time = time(); //time on web-server and dc must be synchronized
+            $duration = $this->newSearch()
+                ->select('lockoutduration')
+                ->where(['objectclass'=>'domain'])
+                ->getLdapQuery()
+                ->getSingleScalarOrNullResult();
+            $now = new \DateTime();
+            $now = AttributeConverterFactory::get('windows_time')->toLdap($now);
+            $actual_lockouttime = $duration+$now;
             $result = array();
-            // and check if the lock time of every user isn't expired
             foreach ($lockedUsers as $lockedUser) {
-                $locktime = round($lockedUser->getLockoutTime() / (10 * 1000 * 1000)) - 11644473600;
-                if ($locktime+$duration > $time) {
-                    $lockedUser->lockouttime = array(0 => date("H:i:s", $locktime));
+                if ($lockedUser['lockouttime']>$actual_lockouttime){
                     $result[] = $lockedUser;
                 }
             }
             if ($checkCount) {
                 return count($result);
             }
-            if (count($result)) {
-                $users = array();
-                foreach ($result as $key => $user) {
-                    $users[$key]['title'] = $user->getName();
-                    $users[$key]['key'] = $user->getAccountName();
-                    $users[$key]["data"]['locktime'] = $user->getLockoutTime();
-                    $users[$key]["selected"] = true;
-                }
-                return $users;
-            } else {
-                return false;
+            $users = array();
+            foreach ($result as $key => $user) {
+                $users[$key]['title'] = $user['name'];
+                $users[$key]['key'] = $user['samaccountname'];
+                $user['lockedDate']->setTimezone(new \DateTimeZone('Europe/Moscow'));
+                $users[$key]["data"]['locktime'] = $user['lockedDate']->format('H:i:s');
+                $users[$key]["selected"] = true;
             }
+            return $users;
         } else {
             return "0";
         }
@@ -264,6 +265,35 @@ class adldap
                 return "user ".$user." not found";
             }
         }
+    }
+
+
+    /**
+     * new instance of LdapQueryBuilder
+     *
+     * @return \LdapTools\Query\LdapQueryBuilder
+     */
+    private function newSearch() {
+        return $this->ad->buildLdapQuery();
+    }
+
+
+    /**
+     * Return $user's fullname
+     * If $user not set it returns fullname of user setted in domain configuration
+     *
+     * @param string $user
+     * @return string
+     */
+    public function getUserFullName($user = null) {
+        if (is_null($user)) {
+            $user = $this->domain->getUsername();
+        }
+        return $this->newSearch()
+            ->fromUsers()
+            ->select('name')
+            ->where(['samaccountname'=>$user])
+            ->getLdapQuery()->getSingleScalarOrNullResult();
     }
 
 

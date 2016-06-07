@@ -164,6 +164,7 @@ class core
                     break;
                 case 'exit':
                     self::$session->destroy();
+                    self::$ad = null;
                     break;
                 case 'get_folders': //request for list of ad folders for building tree
                     $path = self::$param->get('path') ?: null;
@@ -225,10 +226,7 @@ class core
             self::$session->user_logon = true;
         }
         if (self::$session->user_logon) {
-                // get fullname of authenticated user
-/*                $user = self::$ad->search()->users()->
-                findBy("samaccountname", self::$session->username, ['cn','displayName'])->getCommonName();
-                self::addVar('user', $user);*/
+                self::addVar('user', self::$ad->getUserFullName());
                 self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
                 self::addVar('logintime', self::$session->logintime);
             if (self::$session->get("page")) {
