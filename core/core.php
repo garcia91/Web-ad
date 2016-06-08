@@ -193,7 +193,7 @@ class core
                     $lUsers = self::$param->get("ul");
                     foreach ($lUsers as $lUser) {
                         $result = self::$ad->unlockUser($lUser);
-                        if ($result!="ok") {
+                        if ($result != "ok") {
                             echo $result;
                             exit;
                         }
@@ -226,9 +226,9 @@ class core
             self::$session->user_logon = true;
         }
         if (self::$session->user_logon) {
-                self::addVar('user', self::$ad->getUserFullName());
-                self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
-                self::addVar('logintime', self::$session->logintime);
+            self::addVar('user', self::$ad->getUserFullName());
+            self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
+            self::addVar('logintime', self::$session->logintime);
             if (self::$session->get("page")) {
                 self::setPage(self::$session->get("page"));
             } else {
@@ -258,12 +258,12 @@ class core
      */
     public function setPage($template = "auth")
     {
-        if (file_exists("./templates/".$template.".twig")) {
-            self::$currTemplate = $template.".twig";
+        if (file_exists("./templates/" . $template . ".twig")) {
+            self::$currTemplate = $template . ".twig";
             self::$session->set("page", $template);
             return true;
         } else {
-            self::addVar('error', array("code" => 404, "message" => "Page not found: ".$template.".twig"));
+            self::addVar('error', array("code" => 404, "message" => "Page not found: " . $template . ".twig"));
             return false;
         }
     }
@@ -273,13 +273,13 @@ class core
     {
         self::$config = new iniConfig($file);
         self::$session->set("lang", self::$config["general"]["lang"]);
-        self::addVar("notifInterval",self::$config["general"]["notifInterval"]);
+        self::addVar("notifInterval", self::$config["general"]["notifInterval"]);
         if (self::$session->get("page") == "settings") {
             $dcs = self::$config['dc'];
             self::addVar('dc', $dcs);
             // get array of existing langs from list of files of lang path
             $langPath = self::$i18nLangPath;
-            $path = substr($langPath, 0, strrpos($langPath,"/"));
+            $path = substr($langPath, 0, strrpos($langPath, "/"));
             $files = scandir($path);
             $langs = array();
             foreach ($files as $file) {
@@ -315,13 +315,13 @@ class core
         $arrL = $l->getConstants();
         $arr2 = array();
         foreach ($arrL as $index => $item) {
-            $k = explode('_',$index);
-            self::addVar($k,$item,'L');
+            $k = explode('_', $index);
+            self::addVar($k, $item, 'L');
             $arr2[$k[0]][$k[1]] = $item;
         }
         //...and add them to twig vars
         self::$twVars["L"] = $arr2;
-        self::addVar('lang',self::$i18n->getAppliedLang());
+        self::addVar('lang', self::$i18n->getAppliedLang());
     }
 
 
@@ -439,16 +439,17 @@ class core
      *
      * @return string
      */
-    private function change_dcs() {
+    private function change_dcs()
+    {
         self::initConfiguration(self::$iniFile);
         $dcs = self::$param->get("dc");
         if (is_array($dcs)) {
             self::$config->del("dc");
             foreach ($dcs as $index => $dc) {
-                self::$config["dc.".$index] = $dc;
+                self::$config["dc." . $index] = $dc;
             }
             $result = self::$config->save();
-            if ($result===false) {
+            if ($result === false) {
                 return "Error of saving config file";
             } else {
                 return "ok";
@@ -458,7 +459,8 @@ class core
         }
     }
 
-    private function change_settings() {
+    private function change_settings()
+    {
         self::initConfiguration(self::$iniFile);
         $lang = self::$param->get("language");
         $interval = self::$param->get("notifInterval");
@@ -469,7 +471,7 @@ class core
             self::$config["general.notifInterval"] = $interval;
         }
         $result = self::$config->save();
-        if ($result===false) {
+        if ($result === false) {
             return "Error of saving config file";
         } else {
             return "ok";

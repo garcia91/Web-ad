@@ -38,7 +38,7 @@ class session
      */
     public function set($key, $value, $cookie = false)
     {
-        $_SESSION[$key]=$value;
+        $_SESSION[$key] = $value;
         if ($cookie) $this->setCookie($key, $value);
         return true;
     }
@@ -110,7 +110,8 @@ class session
      * @param $key
      * @return bool
      */
-    public function delCookie($key) {
+    public function delCookie($key)
+    {
         if (isset($_COOKIE[$key])) return $this->setCookie($key, '');
         return false;
     }
@@ -124,7 +125,7 @@ class session
      */
     public function setCookieExpire($sec)
     {
-        if (is_int($sec) && $sec>60) {
+        if (is_int($sec) && $sec > 60) {
             $this->cTime = $sec;
             return true;
         } else {
@@ -142,11 +143,11 @@ class session
         session_unset();
         if (!$onlySession && isset($_SERVER['HTTP_COOKIE'])) {
             $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-            foreach($cookies as $cookie) {
+            foreach ($cookies as $cookie) {
                 $parts = explode('=', $cookie);
                 $name = trim($parts[0]);
-                setcookie($name, '', time()-1000);
-                setcookie($name, '', time()-1000, '/');
+                setcookie($name, '', time() - 1000);
+                setcookie($name, '', time() - 1000, '/');
             }
         }
     }
@@ -155,7 +156,8 @@ class session
     /**
      * Destroy session and cookies
      */
-    public function destroy(){
+    public function destroy()
+    {
         $this->clearAll();
         session_destroy();
     }

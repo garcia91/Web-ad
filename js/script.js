@@ -45,7 +45,7 @@ function callPage(o) {
             act: 'change_page',
             page: o.id
         },
-        success: function(){
+        success: function () {
             //location.reload();
         }
     });
@@ -60,15 +60,15 @@ function check_locked() {
         ".",
         {act: "check_locked"},
         function (data) {
-            if (data >0) {
+            if (data > 0) {
                 bell.removeClass("fa-bell-slash");
                 bell.addClass("fa-bell");
                 if (!notifications) {
                     ptitle = document.title;
-                    document.title = "(*) "+ ptitle;
+                    document.title = "(*) " + ptitle;
                 }
                 $("#navbar_bell > ul > li").remove();
-                $('#navbar_bell > ul').append("<li><a id='get_locked' href='#'>"+notif.locked+" <span class='badge'></span></a></li>");
+                $('#navbar_bell > ul').append("<li><a id='get_locked' href='#'>" + notif.locked + " <span class='badge'></span></a></li>");
                 $("#navbar_bell .badge").html(data);
                 $("#get_locked").click(get_locked);
                 notifications = data;
@@ -77,7 +77,7 @@ function check_locked() {
                 bell.addClass("fa-bell-slash");
                 document.title = ptitle;
                 $("#navbar_bell > ul > li").remove();
-                $('#navbar_bell > ul').append("<li class='disabled'><a href='#'>"+notif.nothing+"</a></li>");
+                $('#navbar_bell > ul').append("<li class='disabled'><a href='#'>" + notif.nothing + "</a></li>");
                 $("#navbar_bell .badge").html("");
                 notifications = 0;
             }
@@ -92,14 +92,14 @@ function check_locked() {
 function get_locked() {
     $.get(
         ".",
-        {act:"get_locked"},
+        {act: "get_locked"},
         function (data) {
             if (data != "false") {
                 $("#myModalLabel").html(mymodal.locked_title);
                 $("#myModal .btn-primary").html(mymodal.unlock);
                 var templatediv = "<table id='locked_list'>" +
                     "<thead><tr>" +
-                    "<th></th><th>"+mymodal.user+"</th><th>"+mymodal.locktime+"</th>" +
+                    "<th></th><th>" + mymodal.user + "</th><th>" + mymodal.locktime + "</th>" +
                     "</tr></thead>" +
                     "<tbody></tbody></div>";
                 $("#myModalBody").html(templatediv);
@@ -130,7 +130,7 @@ function get_locked() {
                         $tdList.eq(2).text(node.data.locktime)
                     }
                 });
-                $("#locked_list > tbody > tr > td:nth-child(3)").css("text-align","center");
+                $("#locked_list > tbody > tr > td:nth-child(3)").css("text-align", "center");
                 //button to unlock selected users
                 $("#myModal .btn-primary").click(function () {
                     //get array of samaccountnames of selected users
@@ -144,8 +144,8 @@ function get_locked() {
                             ul: s
                         },
                         function (data) {
-                            if (data!="ok") {
-                                $("#myModalBody").prepend("<div class='alert alert-dismissible alert-danger'>"+data+"</div>")
+                            if (data != "ok") {
+                                $("#myModalBody").prepend("<div class='alert alert-dismissible alert-danger'>" + data + "</div>")
                             } else {
                                 $("#myModal").modal("toggle");
                                 check_locked();
@@ -162,12 +162,11 @@ function get_locked() {
 }
 
 
-
-$(function() {
+$(function () {
     bell = $("#navbar_bell > a > i");
-    
+
     //start checking for locked users
-    setInterval(check_locked, notifInterval*1000);
+    setInterval(check_locked, notifInterval * 1000);
 
     //enable bs tooltips
     $('[data-toggle="tooltip"]').tooltip();
@@ -179,12 +178,12 @@ $(function() {
 
     //create folders tree
     $("#tree").fancytree({
-        extensions : ["glyph", "persist", "wide"],
+        extensions: ["glyph", "persist", "wide"],
         glyph: glyph_opts,
         generateIds: true,
         idPrefix: "ftt_",
         cookieId: "ftt_",
-        source : {
+        source: {
             url: "index.php",
             data: {
                 act: "get_folders"
@@ -224,7 +223,8 @@ $(function() {
                 {
                     url: "index.php",
                     data: {act: "get_objects", path: selected_node},
-                    success: function () {}
+                    success: function () {
+                    }
                 }
             )
 
@@ -234,10 +234,10 @@ $(function() {
     });
 
     $("#objects").fancytree({
-        idPrefix:"fto_",
-        cookieId:"fto_",
+        idPrefix: "fto_",
+        cookieId: "fto_",
         strings: ft_strings,
-        extensions: ["persist", "table", "edit", "glyph" ],
+        extensions: ["persist", "table", "edit", "glyph"],
         glyph: glyph_opts,
         icon: function (e, data) {
             type = data.node.data.type;
@@ -252,12 +252,12 @@ $(function() {
             nodeColumnIdx: 1,
             checkboxColumnIdx: 0
         },
-        renderColumns:function(e,data){
+        renderColumns: function (e, data) {
             var node = data.node,
                 $tdList = $(node.tr).find(">td");
             $tdList.eq(2).text(adtypes[node.data.type])
         },
-        checkbox:true,
+        checkbox: true,
         selectMode: 2,
         source: []
     });
@@ -270,7 +270,7 @@ $(function() {
     });
 
     check_locked();
-    
+
 });
 
 

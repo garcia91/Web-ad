@@ -16,82 +16,89 @@
 {# body content #}
 {% block pagecontent %}
     <div class="container-fluid">
-        <div id="settings-row" class="row">
-            <div class="col-xs-12 col-md-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">{{ L.settings.dcsList }}</div>
-                    <div class="panel-body">
-                        <br>
-                        <form method="post" id="dcsListForm" action=".">
-                            <input type="hidden" name="act" value="change_dcs">
-                            {% if data.dc %}
-                                {% for dc in data.dc %}
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" name="dc[]" title="dc" value="{{ dc }}">
+    <div id="settings-row" class="row">
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">{{ L.settings.dcsList }}</div>
+            <div class="panel-body">
+                <br>
+                <form method="post" id="dcsListForm" action=".">
+                    <input type="hidden" name="act" value="change_dcs">
+                    {% if data.dc %}
+                        {% for dc in data.dc %}
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="dc[]" title="dc" value="{{ dc }}">
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-danger deldc"><span class="fa fa-fw fa-trash"></span></button>
+                                                <button type="button" class="btn btn-danger deldc"><span
+                                                            class="fa fa-fw fa-trash"></span></button>
                                             </span>
-                                        </div>
-                                {% endfor %}
-                            {% endif %}
-                            </form>
-                            <div class="form-group">
-                                <br>
-                                <label for="AddNewDc">{{ L.settings.AddNewDc }}</label>
-                                <div class="input-group">
-                                    <input id="AddNewDc" type="text" class="form-control" placeholder="FQDN of DC" value="">
-                                    <span class="input-group-btn">
-                                        <button id="AddNewDc_btn" type="button" class="btn btn-success"><span class="fa fa-fw fa-plus"></span></button>
-                                    </span>
-                                </div>
                             </div>
-                            <button type="submit" id="dcsListForm_sbmt" class="disabled btn btn-default">{{ L.general.save }}</button>
-
+                        {% endfor %}
+                    {% endif %}
+                </form>
+                <div class="form-group">
+                    <br>
+                    <label for="AddNewDc">{{ L.settings.AddNewDc }}</label>
+                    <div class="input-group">
+                        <input id="AddNewDc" type="text" class="form-control" placeholder="FQDN of DC" value="">
+                                    <span class="input-group-btn">
+                                        <button id="AddNewDc_btn" type="button" class="btn btn-success"><span
+                                                    class="fa fa-fw fa-plus"></span></button>
+                                    </span>
                     </div>
                 </div>
+                <button type="submit" id="dcsListForm_sbmt"
+                        class="disabled btn btn-default">{{ L.general.save }}</button>
+
             </div>
-            <div class="col-xs-12 col-md-6">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">{{ L.settings.GenOpts }}</div>
-                    <div class="panel-body">
-                        <form class="form-horizontal" id="gSettingsForm" action=".">
-                            <input type="hidden" name="act" value="change_settings">
-                            {% if data.langs|length>1 %}
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label" for="sLang">{{ L.settings.lang }}</label>
-                                    <div class="col-sm-4">
-                                        <select id="sLang" name="language" class="form-control">
-                                            {% for lang in data.langs %}
-                                                <option {% if lang == data.lang %}selected{% endif %} value="{{ lang }}">{{ L.languages[lang] }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                            {%  endif %}
-                            <div class="form-group">
-                                <label for="sInterval" class="control-label col-sm-3">{{ L.settings.interval }}</label>
-                                <div class="col-sm-4">
-                                    <select class="form-control" name="notifInterval" id="sInterval">
-                                        {% set inlist = "false" %}
-                                        {% for i in range(low=5, high=120, step=5) %}
-                                            <option {% if i == data.notifInterval %}{% set inlist = "true" %}selected{% endif %} value="{{ i }}">{{ i }} {{ L.settings.sec }}</option>
-                                        {% endfor %}
-                                        {% if inlist == "false" %}
-                                            <option selected value="{{ data.notifInterval }}">{{ data.notifInterval }} {{ L.settings.sec }}</option>
-                                        {% endif %}
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
+        </div>
+    </div>
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">{{ L.settings.GenOpts }}</div>
+            <div class="panel-body">
+                <form class="form-horizontal" id="gSettingsForm" action=".">
+                    <input type="hidden" name="act" value="change_settings">
+                    {% if data.langs|length>1 %}
                         <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-4">
-                                <button id="gSettingsForm_sbmt" type="submit" class="btn btn-default disabled">{{ L.general.save }}</button>
+                            <label class="col-sm-3 control-label" for="sLang">{{ L.settings.lang }}</label>
+                            <div class="col-sm-4">
+                                <select id="sLang" name="language" class="form-control">
+                                    {% for lang in data.langs %}
+                                        <option {% if lang == data.lang %}selected{% endif %}
+                                                value="{{ lang }}">{{ L.languages[lang] }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
-
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="sInterval" class="control-label col-sm-3">{{ L.settings.interval }}</label>
+                        <div class="col-sm-4">
+                            <select class="form-control" name="notifInterval" id="sInterval">
+                                {% set inlist = "false" %}
+                                {% for i in range(low=5, high=120, step=5) %}
+                                    <option {% if i == data.notifInterval %}{% set inlist = "true" %}selected{% endif %}
+                                            value="{{ i }}">{{ i }} {{ L.settings.sec }}</option>
+                                {% endfor %}
+                                {% if inlist == "false" %}
+                                    <option selected
+                                            value="{{ data.notifInterval }}">{{ data.notifInterval }} {{ L.settings.sec }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-4">
+                        <button id="gSettingsForm_sbmt" type="submit"
+                                class="btn btn-default disabled">{{ L.general.save }}</button>
                     </div>
                 </div>
+
             </div>
+        </div>
+    </div>
 
 
     <script>
@@ -107,11 +114,11 @@
         $("#AddNewDc_btn").click(function () {
             var dc = $("#AddNewDc").val();
             $("#AddNewDc").val("");
-            var inp = "<div class='input-group'>"+
-                "<input type='text' class='form-control' name='dc[]' title='dc' value='"+dc+"'>"+
-                    "<span class='input-group-btn'>"+
-                    "<button type='button' class='btn btn-danger deldc'><span class='fa fa-fw fa-trash'></span></button>"+
-                    "</span>"+
+            var inp = "<div class='input-group'>" +
+                    "<input type='text' class='form-control' name='dc[]' title='dc' value='" + dc + "'>" +
+                    "<span class='input-group-btn'>" +
+                    "<button type='button' class='btn btn-danger deldc'><span class='fa fa-fw fa-trash'></span></button>" +
+                    "</span>" +
                     "</div>";
             $("#dcsListForm").append(inp);
             update_del_btns();
@@ -119,7 +126,7 @@
         });
 
 
-        $("input").keypress(function() {
+        $("input").keypress(function () {
             activate_sbmt(this);
         });
 
@@ -145,13 +152,13 @@
         $("button[type=submit]").click(function () {
             btn = $(this);
             formid = btn.attr("id").split("_")[0];
-            msg = $("#"+formid).serialize();
+            msg = $("#" + formid).serialize();
             $.ajax({
                 type: 'POST',
                 url: '',
                 data: msg,
                 success: function (data) {
-                    if (data=="ok") {
+                    if (data == "ok") {
                         btn.removeClass("btn-primary");
                         btn.addClass("btn-success");
                         setTimeout(function () {
@@ -159,12 +166,12 @@
                         }, 1000);
                     } else {
                         btn.toggleClass("btn-primary btn-danger");
-                        alert("{{ L.general.error }}\n"+data);
+                        alert("{{ L.general.error }}\n" + data);
                     }
                 },
                 error: function (xhr, str) {
                     btn.toggleClass("btn-primary btn-danger");
-                    alert("{{ L.general.error }}\n"+ xhr.responseCode);
+                    alert("{{ L.general.error }}\n" + xhr.responseCode);
                 }
             })
         });

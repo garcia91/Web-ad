@@ -96,13 +96,12 @@ class adldap
      * @param $dc string FQDN of domain controller
      * @return bool|string
      */
-    private function setDomainName($dc) {
+    private function setDomainName($dc)
+    {
         if ($dc) {
             $this->domainName = substr(strstr($dc, "."), 1);
         }
     }
-
-
 
 
     /**
@@ -125,9 +124,9 @@ class adldap
                 //->select('')
                 ->setBaseDn($path)
                 ->where($this->search->filter()->bOr(
-                    $this->search->filter()->eq("objectcategory","container"),
-                    $this->search->filter()->eq("objectcategory","organizationalunit"),
-                    $this->search->filter()->eq("objectcategory","builtinDomain")
+                    $this->search->filter()->eq("objectcategory", "container"),
+                    $this->search->filter()->eq("objectcategory", "organizationalunit"),
+                    $this->search->filter()->eq("objectcategory", "builtinDomain")
                 ))
                 ->orderBy('name')
                 ->setScopeOneLevel()
@@ -145,7 +144,8 @@ class adldap
      * @param string $path
      * @return array|bool
      */
-    public function getObjects($path) {
+    public function getObjects($path)
+    {
         $objects = $this->search
             ->from(LdapObjectType::COMPUTER)
             ->from(LdapObjectType::CONTACT, 'contact')
@@ -155,7 +155,7 @@ class adldap
             ->from(LdapObjectType::OU)
             ->where($this->search->filter()->present('name'))
             ->where($this->search->filter()->notPresent('contact.samaccountname'))
-            ->select(['name','dn'])
+            ->select(['name', 'dn'])
             ->setBaseDn($path)
             ->orderBy('name')
             ->setScopeOneLevel()
@@ -184,7 +184,7 @@ class adldap
                 ];
             }
         }
-        return array_merge($folders,$result);
+        return array_merge($folders, $result);
     }
 
 
@@ -205,25 +205,26 @@ class adldap
      * @param bool $checkCount
      * @return array|bool
      */
-    public function getLocked($checkCount = false){
+    public function getLocked($checkCount = false)
+    {
         $lockedUsers = $this->search
             ->fromUsers()
             //->select('*')
-            ->select(['samaccountname','name','lockedDate','lockouttime'])
+            ->select(['samaccountname', 'name', 'lockedDate', 'lockouttime'])
             ->where(['locked' => true])
             ->getLdapQuery()->getArrayResult();
         if (count($lockedUsers)) {
             $duration = $this->newSearch()
                 ->select('lockoutduration')
-                ->where(['objectclass'=>'domain'])
+                ->where(['objectclass' => 'domain'])
                 ->getLdapQuery()
                 ->getSingleScalarOrNullResult();
             $now = new \DateTime();
             $now = AttributeConverterFactory::get('windows_time')->toLdap($now);
-            $actual_lockouttime = $duration+$now;
+            $actual_lockouttime = $duration + $now;
             $result = array();
             foreach ($lockedUsers as $lockedUser) {
-                if ($lockedUser['lockouttime']>$actual_lockouttime){
+                if ($lockedUser['lockouttime'] > $actual_lockouttime) {
                     $result[] = $lockedUser;
                 }
             }
@@ -251,18 +252,19 @@ class adldap
      * @param null|string $user samaccountname
      * @return string
      */
-    public function unlockUser($user = null) {
+    public function unlockUser($user = null)
+    {
         if (!is_null($user)) {
             $user = $this->search()->users()->select('lockouttime')->findBy('samaccountname', $user);
             if ($user) {
-                $user->setAttribute("lockouttime","0");
+                $user->setAttribute("lockouttime", "0");
                 if ($user->update()) {
                     return "ok";
                 } else {
-                    return "update failed for ".$user;
+                    return "update failed for " . $user;
                 }
             } else {
-                return "user ".$user." not found";
+                return "user " . $user . " not found";
             }
         }
     }
@@ -273,7 +275,8 @@ class adldap
      *
      * @return \LdapTools\Query\LdapQueryBuilder
      */
-    private function newSearch() {
+    private function newSearch()
+    {
         return $this->ad->buildLdapQuery();
     }
 
@@ -285,14 +288,15 @@ class adldap
      * @param string $user
      * @return string
      */
-    public function getUserFullName($user = null) {
+    public function getUserFullName($user = null)
+    {
         if (is_null($user)) {
             $user = $this->domain->getUsername();
         }
         return $this->newSearch()
             ->fromUsers()
             ->select('name')
-            ->where(['samaccountname'=>$user])
+            ->where(['samaccountname' => $user])
             ->getLdapQuery()->getSingleScalarOrNullResult();
     }
 

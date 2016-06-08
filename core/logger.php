@@ -19,7 +19,7 @@ class logger
     /**
      * @var string
      */
-    protected $path = __DIR__."/";
+    protected $path = __DIR__ . "/";
 
     /**
      * @var resource
@@ -29,9 +29,8 @@ class logger
 
     public function __construct()
     {
-        $this->file = fopen($this->path.$this->filename, 'a');
+        $this->file = fopen($this->path . $this->filename, 'a');
     }
-
 
 
 }

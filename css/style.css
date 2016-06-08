@@ -29,7 +29,7 @@ main div {
 
 .right-col {
     min-height: inherit;
-    border-left: 1px solid #dddddd ;
+    border-left: 1px solid #dddddd;
 }
 
 #tree, .objects-div {
@@ -37,9 +37,6 @@ main div {
     max-height: 200px;
     padding: 0;
 }
-
-
-
 
 #tree ul {
     min-height: inherit;
@@ -58,6 +55,7 @@ ul.fancytree-container {
     margin-right: 0;
     height: 36px;
 }
+
 #navbar_tree_btn:active {
     background: none;
 }
@@ -66,12 +64,11 @@ ul.fancytree-container {
     #main-row div {
         display: block !important;
     }
+
     ul.fancytree-container {
         font-size: 14px !important;
     }
 }
-
-
 
 #tree {
     overflow: auto;
@@ -123,15 +120,18 @@ ul.fancytree-container {
 .table-fixed thead {
     width: 97%;
 }
+
 .table-fixed tbody {
     height: 230px;
     overflow-y: auto;
     width: 100%;
 }
+
 .table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
     display: block;
 }
-.table-fixed tbody td, .table-fixed thead > tr> th {
+
+.table-fixed tbody td, .table-fixed thead > tr > th {
     float: left;
     border-bottom-width: 0;
 }
