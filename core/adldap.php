@@ -84,7 +84,6 @@ class adldap
     }
 
     /**
-     * @param $dc string
      * @return bool|string
      */
     private function getDomainName()
@@ -121,7 +120,6 @@ class adldap
             return $child ? true : false;
         } else {
             $folders = $this->search
-                //->select('')
                 ->setBaseDn($path)
                 ->where($this->search->filter()->bOr(
                     $this->search->filter()->eq("objectcategory", "container"),
@@ -132,13 +130,12 @@ class adldap
                 ->setScopeOneLevel()
                 ->getLdapQuery()->getArrayResult();
         }
-
         foreach ($folders as $key => $folder) {
             $folders[$key]['hasChilds'] = $this->getFolders($folder['dn'], true);
         }
-
         return $folders;
     }
+
 
     /**
      * @param string $path
@@ -146,27 +143,25 @@ class adldap
      */
     public function getObjects($path)
     {
-        $objects = $this->search
+        $allobjects = $this->search
             ->from(LdapObjectType::COMPUTER)
             ->from(LdapObjectType::CONTACT, 'contact')
             ->from(LdapObjectType::CONTAINER)
             ->from(LdapObjectType::USER)
             ->from(LdapObjectType::GROUP)
             ->from(LdapObjectType::OU)
-            ->where($this->search->filter()->present('name'))
             ->where($this->search->filter()->notPresent('contact.samaccountname'))
-            ->select(['name', 'dn'])
+            ->select('name')
             ->setBaseDn($path)
             ->orderBy('name')
             ->setScopeOneLevel()
             ->getLdapQuery()->getResult()->toArray();
-        if (!count($objects)) return false;
-
+        if (!count($allobjects)) return false;
         //make two different arrays for folders and other objects
         //  it helps us to sort objects with folders at first
-        $result = array();
+        $objects = array();
         $folders = array();
-        foreach ($objects as $object) {
+        foreach ($allobjects as $object) {
             $type = $object->getType();
             if ($this->isFolder($type)) {
                 $folders[] = [
@@ -176,7 +171,7 @@ class adldap
                     'dn' => $object->dn
                 ];
             } else {
-                $result[] = [
+                $objects[] = [
                     'type' => $type,
                     'folder' => false,
                     'name' => $object->name,
@@ -184,7 +179,7 @@ class adldap
                 ];
             }
         }
-        return array_merge($folders, $result);
+        return array_merge($folders, $objects);
     }
 
 
@@ -194,42 +189,57 @@ class adldap
      */
     private function isFolder($type)
     {
-        $folders = array('ou', 'builtinDomain', 'container');
+        $folders = array('ou', 'container'); //'builtinDomain',
         return in_array($type, $folders);
     }
 
 
     /**
-     * Return array (or count) of locked users
+     * Return count of locked users
      *
-     * @param bool $checkCount
-     * @return array|bool
+     * @return int
      */
-    public function getLocked($checkCount = false)
+    public function checkLocked()
     {
         $lockedUsers = $this->search
             ->fromUsers()
-            //->select('*')
-            ->select(['samaccountname', 'name', 'lockedDate', 'lockouttime'])
+            ->select('')
             ->where(['locked' => true])
             ->getLdapQuery()->getArrayResult();
         if (count($lockedUsers)) {
-            $duration = $this->newSearch()
-                ->select('lockoutduration')
-                ->where(['objectclass' => 'domain'])
-                ->getLdapQuery()
-                ->getSingleScalarOrNullResult();
-            $now = new \DateTime();
-            $now = AttributeConverterFactory::get('windows_time')->toLdap($now);
-            $actual_lockouttime = $duration + $now;
+            $actual_lockouttime = $this->getActualLockouttime();
             $result = array();
             foreach ($lockedUsers as $lockedUser) {
                 if ($lockedUser['lockouttime'] > $actual_lockouttime) {
                     $result[] = $lockedUser;
                 }
             }
-            if ($checkCount) {
-                return count($result);
+            return count($result);
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * Return array of locked users
+     *
+     * @return array|bool
+     */
+    public function getLocked()
+    {
+        $lockedUsers = $this->search
+            ->fromUsers()
+            ->select(['samaccountname', 'name', 'lockedDate', 'lockouttime'])
+            ->where(['locked' => true])
+            ->getLdapQuery()->getArrayResult();
+        if (count($lockedUsers)) {
+            $result = array();
+            $actual_lot = $this->getActualLockouttime();
+            foreach ($lockedUsers as $lockedUser) {
+                if ($lockedUser['lockouttime'] > $actual_lot) {
+                    $result[] = $lockedUser;
+                }
             }
             $users = array();
             foreach ($result as $key => $user) {
@@ -247,6 +257,23 @@ class adldap
 
 
     /**
+     * Returns time since user's lockouttime not expired yet
+     *
+     * @return int Time in Windows-time format
+     */
+    private function getActualLockouttime() {
+        $duration = $this->newSearch()
+            ->select('lockoutduration')
+            ->where(['objectclass' => 'domain'])
+            ->getLdapQuery()
+            ->getSingleScalarOrNullResult();
+        $now = new \DateTime();
+        $now = AttributeConverterFactory::get('windows_time')->toLdap($now);
+        return $duration + $now;
+    }
+
+
+    /**
      * Unlock user
      *
      * @param null|string $user samaccountname
@@ -255,17 +282,23 @@ class adldap
     public function unlockUser($user = null)
     {
         if (!is_null($user)) {
-            $user = $this->search()->users()->select('lockouttime')->findBy('samaccountname', $user);
-            if ($user) {
-                $user->setAttribute("lockouttime", "0");
-                if ($user->update()) {
-                    return "ok";
-                } else {
-                    return "update failed for " . $user;
+            $user = $this->search
+                ->fromUsers()
+                ->where(['samaccountname' => $user])
+                ->getLdapQuery()->getOneOrNullResult();
+            if (!is_null($user)) {
+                $user->set('locked', false);
+                try {
+                    $this->ad->persist($user);
+                } catch (\Exception $e) {
+                    return "Error updating user! " . $e->getMessage();
                 }
+                return 'ok';
             } else {
-                return "user " . $user . " not found";
+                return "User not found";
             }
+        } else {
+            return 'User was not sent';
         }
     }
 

@@ -182,7 +182,7 @@ class core
                     exit;
                     break;
                 case "check_locked": //check for existing locked users (return a number)
-                    echo self::$ad->getLocked(true);
+                    echo self::$ad->checkLocked();
                     exit;
                     break;
                 case "get_locked": //request for list of locked users in AD
