@@ -25,7 +25,8 @@
     "autoload": {
         "classmap": [
             "core/core.php",
-            "core/adldap.php",
+            "core/ldaptools.php",
+            "core/adldap2.php",
             "core/session.php",
             "core/logger.php",
             "core/request.php",

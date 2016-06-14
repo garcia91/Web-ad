@@ -9,31 +9,30 @@
 namespace webad;
 
 
-use Adldap\Connections\Configuration;
-use Adldap\Exceptions\Auth\BindException;
-
+use LdapTools\Exception\LdapConnectionException;
+use LdapTools\Exception\LdapBindException;
 
 
 class core
 {
     /**
-     * Object of configuration from ini class
-     *
-     * @var iniConfig
+     * @var iniConfig Object of configuration from ini class
      */
     public static $config;
 
+
     /**
-     * Path to configuration ini-file
-     *
-     * @var string
+     * @var string Class name of using ldap library
+     */
+    private static $adLib = 'webad\adldap2'; // "adldap2" or "ldaptools"
+
+    /**
+     * @var string Path to configuration ini-file
      */
     protected static $iniFile = __DIR__ . "/config.ini";
 
     /**
-     * Path to twig templates
-     *
-     * @var string
+     * @var string Path to twig templates
      */
     protected static $twigTemplates = "./templates/";
 
@@ -56,38 +55,29 @@ class core
     );
 
     /**
-     * Object of session class
-     *
-     * @var session
+     * @var session Object of session class
      */
     public static $session;
 
     /**
-     * Object of i18n class
-     *
-     * @var \i18n
+     * @var \i18n Object of i18n class
      */
     protected static $i18n;
 
     /**
-     * Path to l10n ini-files
-     *
-     * @var string
+     * @var string Path to l10n ini-files
      */
     protected static $i18nLangPath = "./l10n/lang_{LANGUAGE}.ini";
 
     /**
-     * Path to i18n class cache dir
      * !important: do not disable i18n cache!
      *
-     * @var string
+     * @var string Path to i18n class cache dir
      */
     protected static $i18nCachePath = "./cache/l10n/";
 
     /**
-     * Array of variables for twig templates
-     *
-     * @var array
+     * @var array Array of variables for twig templates
      */
     public static $twVars = array();
 
@@ -98,36 +88,21 @@ class core
 
 
     /**
-     * Object of request class.
-     *
-     * @var request
+     * @var request Object of request class.
      */
     public static $param;
 
 
     /**
-     * Value of current (active) twig template
-     *
-     * @var string
+     * @var string Value of current (active) twig template
      */
     private static $currTemplate = 'auth.twig';
 
 
     /**
-     * Object of ad class (extends adldap class)
-     *
-     * @var ad
+     * @var ldapttols|adldap2 Object of ad class (extends adldap class)
      */
-    public static $ad;
-
-
-    /**
-     * Object of adldap configurationa class
-     *
-     * @var Configuration
-     */
-    public static $adConfig;
-
+    private static $ad;
 
 
     //###########################################################
@@ -174,15 +149,16 @@ class core
                     break;
                 case 'exit':
                     self::$session->destroy();
+                    self::$ad = null;
                     break;
                 case 'get_folders': //request for list of ad folders for building tree
-                    $path = self::$param->get('path') ?: '';
-                    echo self::getFolders($path);
+                    $path = self::$param->get('path') ?: null;
+                    echo self::$ad->getFolders($path);
                     exit;
                     break;
                 case 'get_objects': //request for list of ad objects in current folder
-                    $path = self::$param->get('path') ?: '';
-                    echo self::getObjects($path);
+                    $path = self::$param->get('path') ?: null;
+                    echo self::$ad->getObjects($path);
                     exit;
                     break;
                 case 'change_page': //change active page (auth, ad, config, etc)
@@ -191,7 +167,7 @@ class core
                     exit;
                     break;
                 case "check_locked": //check for existing locked users (return a number)
-                    echo self::$ad->getLocked(true);
+                    echo self::$ad->checkLocked();
                     exit;
                     break;
                 case "get_locked": //request for list of locked users in AD
@@ -202,7 +178,7 @@ class core
                     $lUsers = self::$param->get("ul");
                     foreach ($lUsers as $lUser) {
                         $result = self::$ad->unlockUser($lUser);
-                        if ($result!="ok") {
+                        if ($result != "ok") {
                             echo $result;
                             exit;
                         }
@@ -235,12 +211,9 @@ class core
             self::$session->user_logon = true;
         }
         if (self::$session->user_logon) {
-                // get fullname of authenticated user
-                $user = self::$ad->search()->users()->
-                findBy("samaccountname", self::$session->username, ['cn','displayName'])->getCommonName();
-                self::addVar('user', $user);
-                self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
-                self::addVar('logintime', self::$session->logintime);
+            self::addVar('user', self::$ad->getUserFullName());
+            self::$session->logintime = self::$session->logintime ?: date("j.m.Y H:i:s");
+            self::addVar('logintime', self::$session->logintime);
             if (self::$session->get("page")) {
                 self::setPage(self::$session->get("page"));
             } else {
@@ -270,12 +243,12 @@ class core
      */
     public function setPage($template = "auth")
     {
-        if (file_exists("./templates/".$template.".twig")) {
-            self::$currTemplate = $template.".twig";
+        if (file_exists("./templates/" . $template . ".twig")) {
+            self::$currTemplate = $template . ".twig";
             self::$session->set("page", $template);
             return true;
         } else {
-            self::addVar('error', array("code" => 404, "message" => "Page not found: ".$template.".twig"));
+            self::addVar('error', array("code" => 404, "message" => "Page not found: " . $template . ".twig"));
             return false;
         }
     }
@@ -285,13 +258,13 @@ class core
     {
         self::$config = new iniConfig($file);
         self::$session->set("lang", self::$config["general"]["lang"]);
-        self::addVar("notifInterval",self::$config["general"]["notifInterval"]);
+        self::addVar("notifInterval", self::$config["general"]["notifInterval"]);
         if (self::$session->get("page") == "settings") {
             $dcs = self::$config['dc'];
             self::addVar('dc', $dcs);
             // get array of existing langs from list of files of lang path
             $langPath = self::$i18nLangPath;
-            $path = substr($langPath, 0, strrpos($langPath,"/"));
+            $path = substr($langPath, 0, strrpos($langPath, "/"));
             $files = scandir($path);
             $langs = array();
             foreach ($files as $file) {
@@ -327,13 +300,13 @@ class core
         $arrL = $l->getConstants();
         $arr2 = array();
         foreach ($arrL as $index => $item) {
-            $k = explode('_',$index);
-            self::addVar($k,$item,'L');
+            $k = explode('_', $index);
+            self::addVar($k, $item, 'L');
             $arr2[$k[0]][$k[1]] = $item;
         }
         //...and add them to twig vars
         self::$twVars["L"] = $arr2;
-        self::addVar('lang',self::$i18n->getAppliedLang());
+        self::addVar('lang', self::$i18n->getAppliedLang());
     }
 
 
@@ -377,85 +350,30 @@ class core
 
 
     /**
-     * Configure settings for connection to DC
-     *
-     * @return bool
-     * @throws \Adldap\Exceptions\ConfigurationException
-     */
-    private static function prepareAd()
-    {
-        if (self::$session->dc && self::$session->username && self::$session->userpass) {
-            self::$adConfig = new Configuration();
-            self::$adConfig->setDomainControllers(array(self::$session->dc));
-            self::$adConfig->setAdminUsername(self::$session->username);
-            self::$adConfig->setAdminPassword(self::$session->userpass);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * try to connect to DC, using credentials form $adConfig
+     * try to connect to DC, using credentials form
      */
     private static function connectAd()
     {
-        if (self::prepareAd()) {
+        if (self::$session->dc && self::$session->username && self::$session->userpass) {
             try {
-                self::$ad = new ad(self::$adConfig);
-            } catch (BindException $e) {
+                self::$ad = new self::$adLib(self::$session->username, self::$session->userpass, self::$session->dc);
+            } catch (LdapConnectionException $e) {
+                self::$session->del('dc');
+                self::$session->del('username');
+                self::$session->del('userpass');
+                $m = $e->getMessage();
+                self::addVar('error', array("code" => 99, "message" => $m));
+                self::$session->user_logon = false;
+            } catch (LdapBindException $e) {
                 self::$session->del('dc');
                 self::$session->del('username');
                 self::$session->del('userpass');
                 $c = $e->getCode();
-                if ($c == -1) $c=99;
                 $m = $e->getMessage();
                 self::addVar('error', array("code" => $c, "message" => $m));
                 self::$session->user_logon = false;
             }
         }
-    }
-
-    /**
-     * Return list of containers (OUs)
-     *
-     * @param string $path
-     * @return array
-     */
-    private static function getFolders($path = "")
-    {
-        $folders = self::$ad->getFolders($path);
-        $result = array();
-        foreach ($folders as $index => $folder) {
-            $result[$index]['title'] = $folder['name'];
-            $result[$index]['folder'] = "true";
-            $result[$index]['lazy'] = $folder['hasChilds'];
-            $result[$index]['key'] = $folder['dn'];
-        }
-        $result = json_encode($result);
-        return $result;
-    }
-
-
-    /**
-     * Return list of objects in current ad folder
-     *
-     * @param string $path
-     * @return array|string
-     */
-    private static function getObjects($path = "")
-    {
-        if ($objects = self::$ad->getObjects($path)) {
-            $result = array();
-            foreach ($objects as $index => $object) {
-                $result[$index]['title'] = $object['name'];
-                $result[$index]['folder'] = $object['folder'];
-                $result[$index]['key'] = $object['dn'];
-                $result[$index]['data']['type'] = $object['type'];
-            }
-            $result = json_encode($result);
-            return $result;
-        } else return '[]';
     }
 
 
@@ -464,16 +382,17 @@ class core
      *
      * @return string
      */
-    private function change_dcs() {
+    private function change_dcs()
+    {
         self::initConfiguration(self::$iniFile);
         $dcs = self::$param->get("dc");
         if (is_array($dcs)) {
             self::$config->del("dc");
             foreach ($dcs as $index => $dc) {
-                self::$config["dc.".$index] = $dc;
+                self::$config["dc." . $index] = $dc;
             }
             $result = self::$config->save();
-            if ($result===false) {
+            if ($result === false) {
                 return "Error of saving config file";
             } else {
                 return "ok";
@@ -483,7 +402,8 @@ class core
         }
     }
 
-    private function change_settings() {
+    private function change_settings()
+    {
         self::initConfiguration(self::$iniFile);
         $lang = self::$param->get("language");
         $interval = self::$param->get("notifInterval");
@@ -494,7 +414,7 @@ class core
             self::$config["general.notifInterval"] = $interval;
         }
         $result = self::$config->save();
-        if ($result===false) {
+        if ($result === false) {
             return "Error of saving config file";
         } else {
             return "ok";
