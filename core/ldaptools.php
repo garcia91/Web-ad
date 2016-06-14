@@ -15,7 +15,7 @@ use LdapTools\Object\LdapObjectType;
 use LdapTools\Factory\AttributeConverterFactory;
 
 
-class adldap
+class ldaptools
 {
 
 
@@ -130,10 +130,14 @@ class adldap
                 ->setScopeOneLevel()
                 ->getLdapQuery()->getArrayResult();
         }
+        $result = array();
         foreach ($folders as $key => $folder) {
-            $folders[$key]['hasChilds'] = $this->getFolders($folder['dn'], true);
+            $result[$key]["lazy"] = $this->getFolders($folder['dn'], true);
+            $result[$key]['title'] = $folder['name'];
+            $result[$key]['folder'] = "true";
+            $result[$key]['key'] = $folder['dn'];
         }
-        return $folders;
+        return json_encode($result);
     }
 
 
@@ -165,21 +169,21 @@ class adldap
             $type = $object->getType();
             if ($this->isFolder($type)) {
                 $folders[] = [
-                    'type' => $type,
+                    'data' => ['type' => $type],
                     'folder' => true,
-                    'name' => $object->name,
-                    'dn' => $object->dn
+                    'title' => $object->name,
+                    'key' => $object->dn
                 ];
             } else {
                 $objects[] = [
-                    'type' => $type,
+                    'data' => ['type' => $type],
                     'folder' => false,
-                    'name' => $object->name,
-                    'dn' => $object->dn
+                    'title' => $object->name,
+                    'key' => $object->dn
                 ];
             }
         }
-        return array_merge($folders, $objects);
+        return json_encode(array_merge($folders, $objects));
     }
 
 
