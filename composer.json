@@ -11,9 +11,10 @@
         "source": "https://github.com/veron-33/Web-ad"
     },
     "require": {
+        "adldap2/adldap2": "6.*.*",
         "twig/twig": "^1.24",
         "philipp15b/php-i18n": "^3.0",
-        "ldaptools/ldaptools": "v0.20.*"
+        "ldaptools/ldaptools": "v0.*"
     },
     "license": "MIT",
     "authors": [

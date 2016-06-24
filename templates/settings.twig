@@ -48,7 +48,7 @@
                     </div>
                 </div>
                 <button type="submit" id="dcsListForm_sbmt"
-                        class="disabled btn btn-default">{{ L.general.save }}</button>
+                        class="disabled btn btn-default col-xs-12 col-sm-3 col-sm-offset-9">{{ L.general.save }}</button>
 
             </div>
         </div>
@@ -89,16 +89,39 @@
                         </div>
                     </div>
                 </form>
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-4">
                         <button id="gSettingsForm_sbmt" type="submit"
-                                class="btn btn-default disabled">{{ L.general.save }}</button>
-                    </div>
-                </div>
-
+                                class="btn btn-default disabled col-xs-12 col-sm-3 col-sm-offset-9">{{ L.general.save }}</button>
             </div>
         </div>
     </div>
+
+
+    <div class="col-xs-12 col-md-6">
+        <div class="panel panel-primary">
+            <div class="panel-heading">{{ L.settings.LibOpts }}</div>
+            <div class="panel-body">
+                <form class="form-horizontal" id="LibOptsForm" action=".">
+                    <input type="hidden" name="act" value="change_lib">
+                    <div class="radio col-sm-offset-1">
+                        <label>
+                            <input {% if data.adlib=='adldap2' %} checked {% endif %} type="radio" name="lib" value="adldap2">
+                            adldap2 <a href="https://github.com/Adldap2/Adldap2"><span class="fa fa-fw fa-github"></span></a>
+                        </label>
+                    </div>
+                    <div class="radio col-sm-offset-1">
+                        <label>
+                            <input {% if data.adlib=='ldaptools' %} checked {% endif %}  type="radio" name="lib" value="ldaptools">
+                            ldaptools <a href="https://github.com/ldaptools/ldaptools"><span class="fa fa-fw fa-github"></span></a>
+                        </label>
+                    </div>
+
+                </form>
+                        <button id="LibOptsForm_sbmt" type="submit"
+                                class="btn btn-default disabled col-xs-12 col-sm-3 col-sm-offset-9">{{ L.general.save }}</button>
+            </div>
+        </div>
+    </div>
+
 
 
     <script>
@@ -130,9 +153,10 @@
             activate_sbmt(this);
         });
 
-        $("select").change(function () {
+        $("select, .radio").change(function () {
             activate_sbmt(this);
         });
+
 
         /**
          * Activate/deactivate save (submit) button of form

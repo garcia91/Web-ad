@@ -16,15 +16,9 @@ use LdapTools\Exception\LdapBindException;
 class core
 {
     /**
-     * @var iniConfig Object of configuration from ini class
+     * @var iniConfig|null Object of configuration from ini class
      */
-    public static $config;
-
-
-    /**
-     * @var string Class name of using ldap library
-     */
-    private static $adLib = 'webad\adldap2'; // "adldap2" or "ldaptools"
+    public static $config = null;
 
     /**
      * @var string Path to configuration ini-file
@@ -145,6 +139,7 @@ class core
                     self::$session->dc = self::$param->dc;
                     self::$session->username = self::$param->login;
                     self::$session->userpass = self::$param->password;
+                    self::initConfiguration(self::$iniFile);
                     self::connectAd();
                     break;
                 case 'exit':
@@ -192,6 +187,10 @@ class core
                     break;
                 case "change_settings":
                     echo self::change_settings();
+                    exit;
+                    break;
+                case "change_lib":
+                    echo self::change_lib();
                     exit;
                     break;
             }
@@ -254,12 +253,23 @@ class core
     }
 
 
+    /**
+     * Reads settings from config ini-file
+     *
+     * @param $file string
+     */
     private function initConfiguration($file)
     {
+        if (!is_null(self::$config)) return;
         self::$config = new iniConfig($file);
         self::$session->set("lang", self::$config["general"]["lang"]);
+        self::$session->set("adlib", self::$config["general"]["lib"]);
+        self::addVar("server", self::$session->get("dc"));
+        self::addVar("adlib", self::$session->get("adlib"));
         self::addVar("notifInterval", self::$config["general"]["notifInterval"]);
+        //if current page is "settings" that read needed section
         if (self::$session->get("page") == "settings") {
+            self::addVar("adlib", self::$session->adlib);
             $dcs = self::$config['dc'];
             self::addVar('dc', $dcs);
             // get array of existing langs from list of files of lang path
@@ -354,9 +364,15 @@ class core
      */
     private static function connectAd()
     {
-        if (self::$session->dc && self::$session->username && self::$session->userpass) {
+        if (self::$session->dc
+            && self::$session->username
+            && self::$session->userpass
+            && self::$session->adlib
+        ) {
             try {
-                self::$ad = new self::$adLib(self::$session->username, self::$session->userpass, self::$session->dc);
+                // "adldap2" or "ldaptools"
+                $lib = "webad\\".self::$session->adlib;
+                self::$ad = new $lib(self::$session->username, self::$session->userpass, self::$session->dc);
             } catch (LdapConnectionException $e) {
                 self::$session->del('dc');
                 self::$session->del('username');
@@ -412,6 +428,24 @@ class core
         }
         if ($interval) {
             self::$config["general.notifInterval"] = $interval;
+        }
+        $result = self::$config->save();
+        if ($result === false) {
+            return "Error of saving config file";
+        } else {
+            return "ok";
+        }
+    }
+
+
+    private function change_lib()
+    {
+        self::initConfiguration(self::$iniFile);
+        $lib = self::$param->get('lib');
+        if ($lib) {
+            self::$config["general.lib"] = $lib;
+        } else {
+            return "Lib was not sent";
         }
         $result = self::$config->save();
         if ($result === false) {
