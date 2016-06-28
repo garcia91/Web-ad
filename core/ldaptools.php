@@ -207,7 +207,7 @@ class ldaptools
     {
         $lockedUsers = $this->search
             ->fromUsers()
-            ->select('')
+            ->select(['lockouttime'])
             ->where(['locked' => true])
             ->getLdapQuery()->getArrayResult();
         if (count($lockedUsers)) {
