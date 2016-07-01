@@ -311,7 +311,6 @@ class core
         $arr2 = array();
         foreach ($arrL as $index => $item) {
             $k = explode('_', $index);
-            self::addVar($k, $item, 'L');
             $arr2[$k[0]][$k[1]] = $item;
         }
         //...and add them to twig vars
