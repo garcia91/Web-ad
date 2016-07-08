@@ -55,7 +55,8 @@ function callPage(o) {
 /**
  * Check if there are locked users
  */
-function check_locked() {
+function check_locked(goon) {
+    if (goon === undefined) goon = true;
     $.get(
         ".",
         {act: "check_locked"},
@@ -83,7 +84,7 @@ function check_locked() {
             }
         }
     );
-    setTimeout(check_locked, notifInterval * 1000);
+    if (goon) setTimeout(check_locked, notifInterval * 1000);
 }
 
 
@@ -149,13 +150,13 @@ function get_locked() {
                                 $("#myModalBody").prepend("<div class='alert alert-dismissible alert-danger'>" + data + "</div>")
                             } else {
                                 $("#myModal").modal("toggle");
-                                check_locked();
+                                check_locked(false);
                             }
                         }
                     );
                 });
                 $("#myModal").modal();
-            } else check_locked();
+            } else check_locked(false);
 
         }
     )
@@ -267,7 +268,7 @@ $(function () {
 
     });
 
-    if (auth) check_locked();
+    if (auth) check_locked(true);
 
 });
 

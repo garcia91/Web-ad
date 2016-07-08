@@ -37,7 +37,7 @@ main div {
 }
 
 .right-col {
-    min-height: calc(100vh - 101px);
+    min-height: calc(100vh - 91px);
 }
 
 #tree, .objects-div {
