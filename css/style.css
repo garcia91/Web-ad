@@ -25,11 +25,19 @@ main div {
 .left-col {
     min-height: inherit;
     padding: 0;
+    width: 25%;
+    float: left;
+}
+
+.left-col .ui-resizable-e {
+    cursor: col-resize;
+    width: 4px;
+    background: #178acc;
+    right: -4px;
 }
 
 .right-col {
-    min-height: inherit;
-    border-left: 1px solid #dddddd;
+    min-height: calc(100vh - 101px);
 }
 
 #tree, .objects-div {
@@ -81,57 +89,16 @@ ul.fancytree-container {
     padding: 0;
 }
 
-/*
-#objects {
+.navbar-bottom {
+    position: fixed;
+    bottom:0;
+    margin-bottom: 0;
+    z-index: 50;
     width: 100%;
+    border-radius: 0;
+    min-height: 40px;
+    max-height: 40px;
 }
-
-#objects thead, #objects tbody, #objects tr, #objects td, #objects th {display: block}
-
-#objects tr:after {
-    content: ' ';
-    display: block;
-    visibility: hidden;
-    clear: both;
-}
-
-#objects tbody {
-    overflow-y: auto;
-}
-
-#objects tbody td, #objects thead th {
-    float: left;
-}
-
-#objects tbody td:first-child, #objects thead th:first-child {
-    width: 26px;
-}
-
-#objects tbody td:nth-child(2), #objects thead th:nth-child(2) {
-    width: 300px;
-}
-
-#objects tbody td:nth-child(3), #objects thead th:nth-child(3) {
-    width: 300px;
-}
-
-*/
-
-.table-fixed thead {
-    width: 97%;
-}
-
-.table-fixed tbody {
-    height: 230px;
-    overflow-y: auto;
-    width: 100%;
-}
-
-.table-fixed thead, .table-fixed tbody, .table-fixed tr, .table-fixed td, .table-fixed th {
-    display: block;
-}
-
-.table-fixed tbody td, .table-fixed thead > tr > th {
-    float: left;
-    border-bottom-width: 0;
+.navbar-bottom a {
+    padding-top: 10px !important;
 }

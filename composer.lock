@@ -226,16 +226,16 @@
         },
         {
             "name": "ldaptools/ldaptools",
-            "version": "v0.20.0",
+            "version": "v0.21.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ldaptools/ldaptools.git",
-                "reference": "748ef32f54d6f31239c33dd1854d667cc22800e6"
+                "reference": "16825018a4c641bf6f3ed938d61a64ed3d2c9c7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ldaptools/ldaptools/zipball/748ef32f54d6f31239c33dd1854d667cc22800e6",
-                "reference": "748ef32f54d6f31239c33dd1854d667cc22800e6",
+                "url": "https://api.github.com/repos/ldaptools/ldaptools/zipball/16825018a4c641bf6f3ed938d61a64ed3d2c9c7b",
+                "reference": "16825018a4c641bf6f3ed938d61a64ed3d2c9c7b",
                 "shasum": ""
             },
             "require": {
@@ -246,7 +246,7 @@
             },
             "require-dev": {
                 "doctrine/cache": "~1.0",
-                "fabpot/php-cs-fixer": "~1.0",
+                "friendsofphp/php-cs-fixer": "~1.0",
                 "phpspec/phpspec": "~2.5",
                 "tedivm/stash": ">=0.14.1"
             },
@@ -279,7 +279,7 @@
                 "ldap",
                 "openldap"
             ],
-            "time": "2016-05-11 01:15:21"
+            "time": "2016-06-27 12:27:24"
         },
         {
             "name": "paragonie/random_compat",
@@ -365,16 +365,16 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "f5b7563f67779c6d3d5370e23448e707c858df3e"
+                "reference": "7f9839ede2070f53e7e2f0849b9bd14748c434c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/f5b7563f67779c6d3d5370e23448e707c858df3e",
-                "reference": "f5b7563f67779c6d3d5370e23448e707c858df3e",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/7f9839ede2070f53e7e2f0849b9bd14748c434c5",
+                "reference": "7f9839ede2070f53e7e2f0849b9bd14748c434c5",
                 "shasum": ""
             },
             "require": {
@@ -421,20 +421,20 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-06 11:42:41"
+            "time": "2016-06-29 05:41:56"
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "c5a7e7fc273c758b92b85dcb9c46149ccda89623"
+                "reference": "2884c26ce4c1d61aebf423a8b912950fe7c764de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/c5a7e7fc273c758b92b85dcb9c46149ccda89623",
-                "reference": "c5a7e7fc273c758b92b85dcb9c46149ccda89623",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/2884c26ce4c1d61aebf423a8b912950fe7c764de",
+                "reference": "2884c26ce4c1d61aebf423a8b912950fe7c764de",
                 "shasum": ""
             },
             "require": {
@@ -470,7 +470,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-14 11:18:07"
+            "time": "2016-06-29 05:41:56"
         },
         {
             "name": "twig/twig",

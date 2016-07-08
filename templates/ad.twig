@@ -17,27 +17,69 @@
 {% block pagecontent %}
     <div class="container-fluid">
         <div id="main-row" class="row">
-            <div id="tree-col" class="collapse col-sm-4 left-col">
+            <div id="tree-col" class="collapse left-col">
                 <div id="tree"></div>
             </div>
-            <div class="col-sm-8 right-col collapse in objects-div">
-                <table id="objects"
-                       class="fancytree-colorize-selected table table-responsive table-bordered table-striped table-hover table-condensed ">
-                    <colgroup>
-                        <col style="width:26px; max-width: 26px;">
-                        <col>
-                        <col width="150px">
-                    </colgroup>
-                    <thead>
-                    <tr>
-                        <th style="width: 26px; max-width: 26px;"></th>
-                        <th>Имя</th>
-                        <th>Тип</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <div class="right-col collapse in objects-div">
+                <div class="table-container">
+                    <table id="objects"
+                           class="fancytree-colorize-selected table table-responsive table-bordered table-striped table-hover table-condensed ">
+                        <colgroup>
+                            <col style="width:26px; max-width: 26px;">
+                            <col>
+                            <col width="150px">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th style="width: 26px; max-width: 26px;"></th>
+                            <th>Имя</th>
+                            <th>Тип</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <nav class="navbar navbar-default navbar-bottom">
+                        <div class="container-fluid">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#obj-control-bar">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="collapse navbar-collapse" id="obj-control-bar">
+                                <ul class="nav navbar-nav">
+                                    <li class="dropup">
+                                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                            <span class="fa fa-fw fa-plus"></span>
+                                            <span class="caret"></span>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li class="dropdown-header">Create new ...</li>
+                                            <li><a href="#"><i class="fa fa-fw fa-user"></i> User</a></li>
+                                            <li><a href="#"><i class="fa fa-fw fa-users"></i> Group</a></li>
+                                            <li><a href="#"><i class="fa fa-fw fa-folder"></i> Folder</a></li>
+                                            <li><a href="#"><i class="fa fa-fw fa-credit-card"></i> Contact</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="disabled"><a href=""><span class="fa fa-fw fa-trash"></span></a></li>
+                                    <li><a href=""><span class="fa fa-fw fa-copy"></span></a></li>
+                                    <li><a href=""><span class="fa fa-fw fa-clipboard"></span></a></li>
+                                    <li><a href=""><span class="fa fa-fw fa-eraser"></span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>
+    <script>
+        $("#tree-col").resizable({
+            handles:"e",
+            maxWidth: 500,
+            minWidth: 5
+        });
+    </script>
+
 {% endblock %}
