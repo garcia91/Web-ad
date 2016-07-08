@@ -75,6 +75,7 @@
 
     {% if not data.dn %}
         <script>
+            auth = false;
             $(function () {
                 var curr_dc = $('select option:selected').html();
                 $('select').change(function () {
