@@ -61,6 +61,16 @@ ul.fancytree-container {
     border: none;
     font-size: 20px;
 }
+.fancytree-plain.fancytree-container span.fancytree-node.fancytree-active span.fancytree-title,
+table.fancytree-ext-table.fancytree-container > tbody > tr.fancytree-active > td,
+table.fancytree-ext-table.fancytree-colorize-selected.fancytree-treefocus.table-hover > tbody > tr.fancytree-selected.fancytree-active:hover > td,
+table.fancytree-ext-table.fancytree-colorize-selected.table-hover > tbody > tr.fancytree-selected.fancytree-active:hover > td,
+table.fancytree-ext-table.fancytree-treefocus.fancytree-container > tbody > tr.fancytree-active > td
+{
+    background-color: #5db8ec;
+}
+
+table.fancytree-ext-table.fancytree-treefocus.fancytree-container > tbody > tr.fancytree-focused span.fancytree-title,
 a:focus {
     outline: none;
 }
