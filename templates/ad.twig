@@ -49,23 +49,23 @@
                             </div>
                             <div class="collapse navbar-collapse" id="obj-control-bar">
                                 <ul class="nav navbar-nav">
-                                    <li data-trigger="hover" data-toggle="tooltip" data-placement="top" title="{{ L.navbar.create }}" class="dropup">
+                                    <li data-trigger="hover" data-toggle="tooltip" data-placement="left" title="{{ L.navbar.create }}" class="dropup">
                                         <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button">
                                             <span class="fa fa-fw fa-plus"></span>
                                             <span class="caret"></span>
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li class="dropdown-header">{{ L.navbar.create }}</li>
-                                            <li><a href="#"><i class="fa fa-fw fa-user"></i> {{ L.navbar.user }}</a></li>
-                                            <li><a href="#"><i class="fa fa-fw fa-users"></i> {{ L.navbar.group }}</a></li>
-                                            <li><a href="#"><i class="fa fa-fw fa-folder"></i> {{ L.navbar.ou }}</a></li>
-                                            <li><a href="#"><i class="fa fa-fw fa-credit-card"></i> {{ L.navbar.contact }}</a></li>
+                                            <li><a id="new_user_btn" href="#"><i class="fa fa-fw fa-user"></i> {{ L.navbar.user }}</a></li>
+                                            <li><a id="new_group_btn" href="#"><i class="fa fa-fw fa-users"></i> {{ L.navbar.group }}</a></li>
+                                            <li><a id="new_ou_btn" href="#"><i class="fa fa-fw fa-folder"></i> {{ L.navbar.ou }}</a></li>
+                                            <li><a id="new_contact_btn" href="#"><i class="fa fa-fw fa-credit-card"></i> {{ L.navbar.contact }}</a></li>
                                         </ul>
                                     </li>
-                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.delete }}" class="disabled"><a href=""><span class="fa fa-fw fa-trash"></span></a></li>
-                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.copy }}"><a href=""><span class="fa fa-fw fa-copy"></span></a></li>
-                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.paste }}"><a href=""><span class="fa fa-fw fa-clipboard"></span></a></li>
-                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.cut }}"><a href=""><span class="fa fa-fw fa-eraser"></span></a></li>
+                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.delete }}" class="disabled"><a  id="del_obj_btn" href=""><span class="fa fa-fw fa-trash"></span></a></li>
+                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.copy }}"><a id="copy_btn" href=""><span class="fa fa-fw fa-copy"></span></a></li>
+                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.paste }}"><a id="paste_btn" href=""><span class="fa fa-fw fa-clipboard"></span></a></li>
+                                    <li data-toggle="tooltip" data-placement="top" title="{{ L.navbar.cut }}"><a id="cut_btn" href=""><span class="fa fa-fw fa-eraser"></span></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -74,6 +74,59 @@
             </div>
         </div>
     </div>
+
+    <div class="hidden">
+        <div id="new_user_container">
+            <form id="new_user_form" action="">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active"><a data-toggle="tab" href="#new_user_gen_tab">Общие</a></li>
+                    <li><a data-toggle="tab" href="#new_user_group_tab">Группы</a></li>
+                    <li><a data-toggle="tab" href="#new_user_org_tab">Организация</a></li>
+                    <li class="disabled"><a href="#">Exchange</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="new_user_gen_tab" class="tab-pane active">
+                        <br>
+                        <div class="form-group">
+                            <label for="new_user_sname">{{ L.inputname.sname }}</label>
+                            <input type="text" id="new_user_sname" name="sname" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_user_fname">{{ L.inputname.fname }}</label>
+                            <input type="text" id="new_user_fname" name="fname" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_user_fullname">{{ L.inputname.fullname }}</label>
+                            <input type="text" id="new_user_fullname" name="fullname" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_user_pass">{{ L.inputname.pass }}</label>
+                            <input type="password" id="new_user_pass" name="pass" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_user_rpass">{{ L.inputname.rpass }}</label>
+                            <input type="password" id="new_user_rpass" name="rpass" class="form-control">
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="chpass"> {{ L.inputname.chpass }}
+                            </label>
+                        </div>
+                    </div>
+                    <div id="new_user_group_tab" class="tab-pane">
+                        sdfsdfsdf
+                    </div>
+                    <div id="new_user_org_tab" class="tab-pane">
+                        sdfsdfgsdfghshs
+                    </div>
+                    <div id="new_user_exch_tab" class="tab-pane">
+                        sdfwfdhs rth srth
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         $("#tree-col").resizable({
             handles:"e",

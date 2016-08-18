@@ -164,6 +164,15 @@ function get_locked() {
 }
 
 
+function new_user() {
+    $("#myModalLabel").html("New user cr");
+    $("#myModal .btn-primary").html("Create");
+    var text = $("#new_user_container").html();
+    $("#new_user_container").html("");
+    $("#myModalBody").html(text);
+    $("#myModal").modal();
+}
+
 $(function () {
     bell = $("#navbar_bell > a > i");
 
@@ -266,6 +275,11 @@ $(function () {
         $("#main-row .collapse").collapse('toggle');
         $("#navbar_tree_btn").toggleClass('active');
 
+    });
+
+    //open new user dialog window
+    $("#new_user_btn").click(function () {
+        new_user();
     });
 
     if (auth) check_locked(true);

@@ -61,6 +61,9 @@ ul.fancytree-container {
     border: none;
     font-size: 20px;
 }
+a:focus {
+    outline: none;
+}
 
 #navbar_tree_btn {
     float: left;
