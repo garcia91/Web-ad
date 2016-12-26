@@ -76,55 +76,7 @@
     </div>
 
     <div class="hidden">
-        <div id="new_user_container">
-            <form id="new_user_form" action="">
-                <ul class="nav nav-tabs nav-justified">
-                    <li class="active"><a data-toggle="tab" href="#new_user_gen_tab">Общие</a></li>
-                    <li><a data-toggle="tab" href="#new_user_group_tab">Группы</a></li>
-                    <li><a data-toggle="tab" href="#new_user_org_tab">Организация</a></li>
-                    <li class="disabled"><a href="#">Exchange</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div id="new_user_gen_tab" class="tab-pane active">
-                        <br>
-                        <div class="form-group">
-                            <label for="new_user_sname">{{ L.inputname.sname }}</label>
-                            <input type="text" id="new_user_sname" name="sname" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="new_user_fname">{{ L.inputname.fname }}</label>
-                            <input type="text" id="new_user_fname" name="fname" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="new_user_fullname">{{ L.inputname.fullname }}</label>
-                            <input type="text" id="new_user_fullname" name="fullname" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="new_user_pass">{{ L.inputname.pass }}</label>
-                            <input type="password" id="new_user_pass" name="pass" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label for="new_user_rpass">{{ L.inputname.rpass }}</label>
-                            <input type="password" id="new_user_rpass" name="rpass" class="form-control">
-                        </div>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" name="chpass"> {{ L.inputname.chpass }}
-                            </label>
-                        </div>
-                    </div>
-                    <div id="new_user_group_tab" class="tab-pane">
-                        sdfsdfsdf
-                    </div>
-                    <div id="new_user_org_tab" class="tab-pane">
-                        sdfsdfgsdfghshs
-                    </div>
-                    <div id="new_user_exch_tab" class="tab-pane">
-                        sdfwfdhs rth srth
-                    </div>
-                </div>
-            </form>
-        </div>
+        {% include "user.twig" %}
     </div>
 
     <script>

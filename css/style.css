@@ -121,3 +121,17 @@ a:focus {
 .navbar-bottom a {
     padding-top: 10px !important;
 }
+
+
+div #user_group_list {
+    height: 400px;
+    box-sizing: border-box;
+}
+
+.indent-top-10 {
+    margin-top: 10px;
+}
+
+.indent-bottom-10 {
+    margin-bottom: 10px;
+}

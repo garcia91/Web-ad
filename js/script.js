@@ -165,10 +165,10 @@ function get_locked() {
 
 
 function new_user() {
-    $("#myModalLabel").html("New user cr");
-    $("#myModal .btn-primary").html("Create");
-    var text = $("#new_user_container").html();
-    $("#new_user_container").html("");
+    $("#myModalLabel").html(mymodal.newuser_title);
+    $("#myModal .btn-primary").html(mymodal.create);
+    var text = $("#user_container").html();
+    $("#user_container").html("");
     $("#myModalBody").html(text);
     $("#myModal").modal();
 }

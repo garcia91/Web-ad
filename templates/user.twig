@@ -1,0 +1,56 @@
+<div id="user_container">
+    <form id="user_form" action="">
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#user_gen_tab">{{ L.modaltabs.general }}</a></li>
+            <li><a data-toggle="tab" href="#user_group_tab">{{ L.modaltabs.groups }}</a></li>
+            <li><a data-toggle="tab" href="#user_org_tab">{{ L.modaltabs.org }}</a></li>
+            <li class="disabled"><a href="#">{{ L.modaltabs.exch }}</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="user_gen_tab" class="tab-pane active">
+                <br>
+                <div class="form-group">
+                    <label for="user_sname">{{ L.inputname.sname }}</label>
+                    <input type="text" id="user_sname" name="sname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="user_fname">{{ L.inputname.fname }}</label>
+                    <input type="text" id="user_fname" name="fname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="user_fullname">{{ L.inputname.fullname }}</label>
+                    <input type="text" id="user_fullname" name="fullname" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="user_pass">{{ L.inputname.pass }}</label>
+                    <input type="password" id="user_pass" name="pass" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="user_rpass">{{ L.inputname.rpass }}</label>
+                    <input type="password" id="user_rpass" name="rpass" class="form-control">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="chpass"> {{ L.inputname.chpass }}
+                    </label>
+                </div>
+            </div>
+            <div id="user_group_tab" class="tab-pane">
+                <div class="panel">
+                    <div id="user_group_list"></div>
+                </div>
+                <div class="pull-right indent-top-10">
+                    <button class="btn btn-default">{{ L.general.add }}</button>
+                    <button class="btn btn-danger disabled">{{ L.general.delete }}</button>
+                </div>
+                <br><br>
+            </div>
+            <div id="user_org_tab" class="tab-pane">
+                sdfsdfgsdfghshs
+            </div>
+            <div id="user_exch_tab" class="tab-pane">
+                sdfwfdhs rth srth
+            </div>
+        </div>
+    </form>
+</div>
