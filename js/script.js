@@ -67,6 +67,7 @@ function check_locked(goon) {
                 if (!notifications) {
                     ptitle = document.title;
                     document.title = "(*) " + ptitle;
+                    sendNotification(notif.locked,{icon: './css/images/lockeduser64.png'},'get_locked()');
                 }
                 $("#navbar_bell > ul > li").remove();
                 $('#navbar_bell > ul').append("<li><a id='get_locked' href='#'>" + notif.locked + " <span class='badge'></span></a></li>");
@@ -171,6 +172,35 @@ function new_user() {
     $("#user_container").html("");
     $("#myModalBody").html(text);
     $("#myModal").modal();
+}
+
+/**
+ *
+ * @param title
+ * @param options
+ * @param func
+ */
+function sendNotification(title, options, func) {
+    // check for supporting of notifications
+    if (!("Notification" in window)) {
+        alert(notif.notifUnsupp);
+    }
+    // check for rights
+    else if (Notification.permission === "granted") {
+        var notification = new Notification(title, options);
+        function clickFunc() {
+            window.focus();
+            if (func) eval(func);
+        }
+        notification.onclick = clickFunc;
+    }
+    else if (Notification.permission !== 'denied') {
+        Notification.requestPermission(function (permission) {
+            if (permission === "granted") {
+                var notification = new Notification(title, options);
+            }
+        });
+    }
 }
 
 $(function () {
