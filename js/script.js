@@ -67,7 +67,7 @@ function check_locked(goon) {
                 if (!notifications) {
                     ptitle = document.title;
                     document.title = "(*) " + ptitle;
-                    sendNotification(notif.locked,{icon: './css/images/lockeduser64.png'},'get_locked()');
+                    sendNotification(notif.locked,{icon: './css/images/lockeduser64.png', body: notif.presstoshow},'get_locked()');
                 }
                 $("#navbar_bell > ul > li").remove();
                 $('#navbar_bell > ul').append("<li><a id='get_locked' href='#'>" + notif.locked + " <span class='badge'></span></a></li>");
@@ -188,16 +188,19 @@ function sendNotification(title, options, func) {
     // check for rights
     else if (Notification.permission === "granted") {
         var notification = new Notification(title, options);
-        function clickFunc() {
+        notification.onclick = function () {
             window.focus();
             if (func) eval(func);
-        }
-        notification.onclick = clickFunc;
+        };
     }
     else if (Notification.permission !== 'denied') {
         Notification.requestPermission(function (permission) {
             if (permission === "granted") {
                 var notification = new Notification(title, options);
+                notification.onclick = function () {
+                    window.focus();
+                    if (func) eval(func);
+                };
             }
         });
     }

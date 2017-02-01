@@ -122,6 +122,15 @@ a:focus {
     padding-top: 10px !important;
 }
 
+#navbar_bell {
+    position: static;
+}
+.dropdown-menu-edge {
+    position: absolute;
+    right: 0;
+    left: auto;
+}
+
 
 div #user_group_list {
     height: 400px;
